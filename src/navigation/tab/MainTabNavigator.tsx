@@ -1,4 +1,3 @@
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import useThemeStorage from '@/hooks/useThemeStorage';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeStackNavigator, { HomeStackParamList } from '../stack/HomeStackNavigator';
@@ -7,6 +6,7 @@ import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import ChatStackNavigator, { ChatStackParamList } from '../stack/ChatStackNavigator';
 import JobStackNavigator, { JobStackParamList } from '../stack/JobStackNavigator';
 import ProfileStackNavigator, { ProfileStackParamList } from '../stack/ProfileNavigator';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { colors } from '@/constants';
 
 export type MainTabParamList = {
@@ -24,23 +24,23 @@ const TabIcons = (route: RouteProp<MainTabParamList>, focused: boolean) => {
 
   switch (route.name) {
     case mainNavigations.HOME:
-      iconName = 'home';
+      iconName = 'home-sharp';
       break;
     case mainNavigations.JOB:
-      iconName = 'work';
+      iconName = 'briefcase';
       break;
     case mainNavigations.CHAT:
-      iconName = 'chat';
+      iconName = 'chatbubbles';
       break;
     case mainNavigations.PROFILE:
-      iconName = 'person';
+      iconName = 'person-circle';
       break;
     default:
       break;
   }
 
   return (
-    <MaterialIcons
+    <Ionicons
       name={iconName}
       size={24}
       color={focused ? colors[theme].BLACK : colors[theme].GRAY_500}
