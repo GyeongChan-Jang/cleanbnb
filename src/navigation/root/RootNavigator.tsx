@@ -8,7 +8,7 @@ const RootNavigator = () => {
   const { isLogin } = useAuth();
   return (
     <RetryErrorBoundary>
-      {!isLogin ? <MainTabNavigator /> : <AuthStackNavigator />}
+      {isLogin ? <MainTabNavigator /> : <AuthStackNavigator />}
     </RetryErrorBoundary>
   );
 };

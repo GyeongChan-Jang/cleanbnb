@@ -1,5 +1,7 @@
 const common = {
   SKY_400: '#70D6FF',
+  SKY_500: '#4AA0E6',
+  SKY_600: '#0077CC',
   UNCHANGE_WHITE: '#FFF',
   UNCHANGE_BLACK: '#000',
 } as const;
