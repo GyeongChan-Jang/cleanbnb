@@ -24,10 +24,6 @@ type KakaoLoginScreenProps = StackScreenProps<
   typeof authNavigations.KAKAO
 >;
 
-const REDIRECT_URI = `${
-  Platform.OS === 'ios' ? 'http://localhost:3030/' : 'http://10.0.2.2:3030/'
-}auth/oauth/kakao`;
-
 function KakaoLoginScreen({ navigation, route }: KakaoLoginScreenProps) {
   const { theme } = useThemeStore();
   const styles = styling(theme);
@@ -37,44 +33,25 @@ function KakaoLoginScreen({ navigation, route }: KakaoLoginScreenProps) {
 
   const handleOnMessage = (event: WebViewMessageEvent) => {
     console.log(event);
-    // if (event.nativeEvent.url.includes(`${REDIRECT_URI}?code=`)) {
-    //   const code = event.nativeEvent.url.replace(`${REDIRECT_URI}?code=`, '');
-    //   requestToken(code);
-    // }
   };
-
-  // const requestToken = async (code: string) => {
-  //   const response = await axios({
-  //     method: 'post',
-  //     url: 'https://kauth.kakao.com/oauth/token',
-  //     params: {
-  //       grant_type: 'authorization_code',
-  //       client_id: Config.KAKAO_REST_API_KEY,
-  //       redirect_uri: REDIRECT_URI,
-  //       code,
-  //     },
-  //   });
-  //   kakaoMutation.mutate(response.data.access_token);
-  // };
-
   const handleNavigationChangeStore = (event: WebViewNavigation) => {
-    const isMatched = event.url.includes(`${REDIRECT_URI}?code=`);
-    setIsLoading(isMatched);
-    setIsNavigateChange(event.loading);
+    setIsLoading(event.loading);
   };
   return (
     <SafeAreaView style={styles.container}>
-      {(isLoading || isChangeNavigate) && (
+      {isLoading && (
         <View style={styles.kakaoLoadingContainer}>
           <ActivityIndicator size="small" color={colors[theme].BLACK} />
         </View>
       )}
       <WebView
-        // source={{
-        //   uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${Config.KAKAO_REST_API_KEY}&redirect_uri=${REDIRECT_URI}`,
-        // }}
+        source={{
+          uri: route.params.url,
+        }}
         onMessage={handleOnMessage}
-        injectedJavaScript={"window.ReactNativeWebView.postMessage('')"}
+        injectedJavaScript={
+          "window.ReactNativeWebView.postMessage('카카오 로그인 중 에러가 발생했습니다.')"
+        }
         onNavigationStateChange={handleNavigationChangeStore}
       />
     </SafeAreaView>

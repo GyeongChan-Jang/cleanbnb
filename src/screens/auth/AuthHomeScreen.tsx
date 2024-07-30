@@ -69,11 +69,6 @@ const AuthHomeScreen = ({ navigation }: AuthHomeScreenProps) => {
       navigation.navigate(authNavigations.KAKAO, {
         url: data.url,
       });
-      console.log(data);
-
-      // 로그인 성공 처리
-
-      // 여기에 로그인 성공 후 처리 로직 추가 (예: 홈 화면으로 네비게이션)
     } catch (error) {
       console.error('Kakao login failed:', error);
       // Toast.show({
