@@ -6,11 +6,8 @@ import useAuth from '@/hooks/useAuth';
 
 const RootNavigator = () => {
   const { isLogin } = useAuth();
-  return (
-    <RetryErrorBoundary>
-      {isLogin ? <MainTabNavigator /> : <AuthStackNavigator />}
-    </RetryErrorBoundary>
-  );
+
+  return <RetryErrorBoundary>{isLogin ? <MainTabNavigator /> : <AuthStackNavigator />}</RetryErrorBoundary>;
 };
 
 export default RootNavigator;

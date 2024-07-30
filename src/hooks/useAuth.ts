@@ -1,32 +1,40 @@
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useEffect, useState } from 'react';
+import { Session } from '@supabase/supabase-js';
 
 const useAuth = () => {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        setIsLogin(true);
-      } else if (event === 'SIGNED_OUT') {
-        setIsLogin(false);
-      }
-    });
+    const checkSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setSession(session);
+      setIsLogin(!!session);
+    };
 
-    // 초기 세션 확인
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    checkSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
       setIsLogin(!!session);
     });
 
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
-  console.log('isLogin', isLogin);
-  return {
-    isLogin,
-  };
+  const signOut = useCallback(async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error signing out:', error.message);
+    }
+  }, []);
+
+  return { isLogin, session, signOut };
 };
 
 export default useAuth;

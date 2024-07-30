@@ -1,16 +1,6 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import React from 'react';
-import {
-  Button,
-  Dimensions,
-  Image,
-  Platform,
-  Pressable,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import React, { useEffect } from 'react';
+import { Button, Dimensions, Image, Platform, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { AuthStackParamList } from '@/navigation/stack/AuthStackNavigator';
 import { authNavigations } from '@/constants/navigations';
 // import CustomButton from '@/components/common/CustomButton';
@@ -24,10 +14,7 @@ import { ThemeMode } from '@/types/common';
 import CustomButton from '@/components/common/CustomButton';
 import { supabase } from '@/lib/supabase';
 
-type AuthHomeScreenProps = StackScreenProps<
-  AuthStackParamList,
-  typeof authNavigations.AUTH_HOME
->;
+type AuthHomeScreenProps = StackScreenProps<AuthStackParamList, typeof authNavigations.AUTH_HOME>;
 
 const AuthHomeScreen = ({ navigation }: AuthHomeScreenProps) => {
   const { theme } = useThemeStore();
@@ -82,11 +69,7 @@ const AuthHomeScreen = ({ navigation }: AuthHomeScreenProps) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image
-          resizeMode="contain"
-          style={styles.image}
-          source={require('../../assets/justsoldit.png')}
-        />
+        <Image resizeMode="contain" style={styles.image} source={require('../../assets/justsoldit.png')} />
       </View>
       <View style={styles.buttonContainer}>
         {/* {Platform.OS === 'ios' && (
