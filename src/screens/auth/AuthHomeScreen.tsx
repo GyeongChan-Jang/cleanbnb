@@ -14,6 +14,7 @@ import { ThemeMode } from '@/types/common';
 import CustomButton from '@/components/common/CustomButton';
 import { supabase } from '@/lib/supabase';
 import { getProfile, login } from '@react-native-seoul/kakao-login';
+import Config from 'react-native-config';
 
 type AuthHomeScreenProps = StackScreenProps<AuthStackParamList, typeof authNavigations.AUTH_HOME>;
 
@@ -46,37 +47,43 @@ const AuthHomeScreen = ({ navigation }: AuthHomeScreenProps) => {
   //   }
   // };
 
-  const handleKakaoLoginButton = async () => {
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'kakao',
-      });
+  // WebView 사용하는 경우
+  // const handleKakaoLoginButton = async () => {
+  //   try {
+  //     const { data, error } = await supabase.auth.signInWithOAuth({
+  //       provider: 'kakao',
+  //     });
 
-      if (error) throw error;
+  //     if (error) throw error;
 
-      navigation.navigate(authNavigations.KAKAO, {
-        url: data.url,
-      });
-    } catch (error) {
-      console.error('Kakao login failed:', error);
-      // Toast.show({
-      //   type: 'error',
-      //   text1: '카카오 로그인 실패',
-      //   text2: '나중에 다시 시도해주세요.',
-      // });
-    }
-  };
+  //     navigation.navigate(authNavigations.KAKAO, {
+  //       url: data.url,
+  //     });
+  //   } catch (error) {
+  //     console.error('Kakao login failed:', error);
+  //     // Toast.show({
+  //     //   type: 'error',
+  //     //   text1: '카카오 로그인 실패',
+  //     //   text2: '나중에 다시 시도해주세요.',
+  //     // });
+  //   }
+  // };
 
   // 카카오 라이브러리 쓰는 경우
-  // const handleKakaoLogin = async () => {
+  // const handleKakaoLogin = async () => {01075629994
   //   try {
   //     const { accessToken } = await login();
   //     const profile = await getProfile();
-  //     console.log(profile);
+  //     console.log('accessToken', accessToken);
 
-  //     const data = await supabase.auth.signInWithOAuth({
-  //       provider: 'kakao',
-  //     });
+  //     if (accessToken) {
+  //       const { data, error } = await supabase.auth.signInWithIdToken({
+  //         provider: 'kakao',
+  //         token: accessToken,
+  //       });
+  //       console.log('로그인성공', data);
+  //       console.log('supabase 로그인 에러', error);
+  //     }
 
   //   } catch (error) {
   //     console.error('Kakao login error:', error);
@@ -99,8 +106,9 @@ const AuthHomeScreen = ({ navigation }: AuthHomeScreenProps) => {
           />
         )} */}
         <CustomButton
-          onPress={handleKakaoLoginButton}
+          // onPress={handleKakaoLoginButton}
           // onPress={user ? () => supabase.auth.signOut() : handleKakaoLogin}
+          onPress={() => navigation.navigate(authNavigations.KAKAO)}
           variant="filled"
           label="카카오 로그인하기"
           // label={user ? '로그아웃' : '카카오로 로그인'}

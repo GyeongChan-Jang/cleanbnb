@@ -21,6 +21,9 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+      <queries>
+        <package android:name="com.kakao.talk" />
+      </queries>
       <!-- <activity
         android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
         android:exported="true">

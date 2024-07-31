@@ -8,9 +8,10 @@ import KakaoLoginScreen from '@/screens/auth/KakaoLoginScreen';
 
 export type AuthStackParamList = {
   [authNavigations.AUTH_HOME]: undefined;
-  [authNavigations.KAKAO]: {
-    url: string;
-  };
+  [authNavigations.KAKAO]: undefined;
+  // [authNavigations.KAKAO]: {
+  //   url: string;
+  // };
   [authNavigations.APPLE]: undefined;
 };
 
