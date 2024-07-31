@@ -1,5 +1,5 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Dimensions, Image, Platform, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { AuthStackParamList } from '@/navigation/stack/AuthStackNavigator';
 import { authNavigations } from '@/constants/navigations';
@@ -13,6 +13,7 @@ import useThemeStore from '@/store/useThemeStore';
 import { ThemeMode } from '@/types/common';
 import CustomButton from '@/components/common/CustomButton';
 import { supabase } from '@/lib/supabase';
+import { getProfile, login } from '@react-native-seoul/kakao-login';
 
 type AuthHomeScreenProps = StackScreenProps<AuthStackParamList, typeof authNavigations.AUTH_HOME>;
 
@@ -45,7 +46,7 @@ const AuthHomeScreen = ({ navigation }: AuthHomeScreenProps) => {
   //   }
   // };
 
-  const handleKakaoLogin = async () => {
+  const handleKakaoLoginButton = async () => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'kakao',
@@ -66,6 +67,22 @@ const AuthHomeScreen = ({ navigation }: AuthHomeScreenProps) => {
     }
   };
 
+  // 카카오 라이브러리 쓰는 경우
+  // const handleKakaoLogin = async () => {
+  //   try {
+  //     const { accessToken } = await login();
+  //     const profile = await getProfile();
+  //     console.log(profile);
+
+  //     const data = await supabase.auth.signInWithOAuth({
+  //       provider: 'kakao',
+  //     });
+
+  //   } catch (error) {
+  //     console.error('Kakao login error:', error);
+  //   }
+  // };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.imageContainer}>
@@ -82,10 +99,11 @@ const AuthHomeScreen = ({ navigation }: AuthHomeScreenProps) => {
           />
         )} */}
         <CustomButton
-          // onPress={() => navigation.navigate(authNavigations.KAKAO)}
-          onPress={handleKakaoLogin}
+          onPress={handleKakaoLoginButton}
+          // onPress={user ? () => supabase.auth.signOut() : handleKakaoLogin}
           variant="filled"
           label="카카오 로그인하기"
+          // label={user ? '로그아웃' : '카카오로 로그인'}
           style={styles.kakaoButtonContainer}
           textStyle={styles.kakaoButtonText}
           icon={<Ionicons name="chatbubble-sharp" size={16} color="#181500" />}

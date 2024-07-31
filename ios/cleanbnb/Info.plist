@@ -27,14 +27,14 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>kakao$(KAKAO_NATIVE_APP_KEY)</string>
+				<string>kakao4310fceae6330547e14837fbcc0f870b</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<string>1</string>
 	<key>KAKAO_APP_KEY</key>
-	<string>$(KAKAO_NATIVE_APP_KEY)</string>
+	<string>4310fceae6330547e14837fbcc0f870b</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>naversearchapp</string>

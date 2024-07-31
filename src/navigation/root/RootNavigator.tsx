@@ -2,13 +2,12 @@ import React from 'react';
 import RetryErrorBoundary from '@/components/common/RetryErrorBoundary';
 import AuthStackNavigator from '../stack/AuthStackNavigator';
 import MainTabNavigator from '../tab/MainTabNavigator';
-import useAuth from '@/hooks/useAuth';
-import Config from 'react-native-config';
+import useAuthStore from '@/store/authStore';
 
 const RootNavigator = () => {
-  const { isLogin } = useAuth();
+  const { isLoggedIn } = useAuthStore();
 
-  return <RetryErrorBoundary>{isLogin ? <MainTabNavigator /> : <AuthStackNavigator />}</RetryErrorBoundary>;
+  return <RetryErrorBoundary>{isLoggedIn ? <MainTabNavigator /> : <AuthStackNavigator />}</RetryErrorBoundary>;
 };
 
 export default RootNavigator;
