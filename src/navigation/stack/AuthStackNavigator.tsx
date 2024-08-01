@@ -1,26 +1,28 @@
-import React from 'react';
 import { authNavigations } from '@/constants/navigations';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import useThemeStorage from '@/hooks/useThemeStorage';
 import { colors } from '@/constants';
 import AuthHomeScreen from '@/screens/auth/AuthHomeScreen';
 import KakaoLoginScreen from '@/screens/auth/KakaoLoginScreen';
+import UserSetupScreen from '@/screens/auth/UserSetupScreen';
 
 export type AuthStackParamList = {
   [authNavigations.AUTH_HOME]: undefined;
   [authNavigations.KAKAO]: undefined;
-  // [authNavigations.KAKAO]: {
-  //   url: string;
-  // };
   [authNavigations.APPLE]: undefined;
+  [authNavigations.USER_SETUP]: undefined;
 };
+interface AuthStackNavigatorProps {
+  initialRouteName?: keyof AuthStackParamList;
+}
 
 const Stack = createStackNavigator<AuthStackParamList>();
 
-const AuthStackNavigator = () => {
+const AuthStackNavigator = ({ initialRouteName }: AuthStackNavigatorProps) => {
   const { theme } = useThemeStorage();
   return (
     <Stack.Navigator
+      initialRouteName={initialRouteName}
       screenOptions={{
         cardStyle: {
           backgroundColor: colors[theme].WHITE,
@@ -47,6 +49,13 @@ const AuthStackNavigator = () => {
         component={KakaoLoginScreen}
         options={{
           headerTitle: '카카오 로그인',
+        }}
+      />
+      <Stack.Screen
+        name="UserSetup"
+        component={UserSetupScreen}
+        options={{
+          headerTitle: '프로필 설정',
         }}
       />
     </Stack.Navigator>

@@ -5,9 +5,13 @@ import MainTabNavigator from '../tab/MainTabNavigator';
 import useAuthStore from '@/store/authStore';
 
 const RootNavigator = () => {
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, user } = useAuthStore();
 
-  return <RetryErrorBoundary>{isLoggedIn ? <MainTabNavigator /> : <AuthStackNavigator />}</RetryErrorBoundary>;
+  return (
+    <RetryErrorBoundary>
+      {isLoggedIn ? <MainTabNavigator /> : <AuthStackNavigator />}
+    </RetryErrorBoundary>
+  );
 };
 
 export default RootNavigator;

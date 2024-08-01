@@ -17,13 +17,7 @@ const authNavigations = {
   AUTH_HOME: 'AuthHome',
   APPLE: 'Apple',
   KAKAO: 'Kakao',
+  USER_SETUP: 'UserSetup',
 } as const;
 
-export {
-  mainNavigations,
-  homeNavigations,
-  chatNavigations,
-  jobNavigations,
-  profileNavigations,
-  authNavigations,
-};
+export { mainNavigations, homeNavigations, chatNavigations, jobNavigations, profileNavigations, authNavigations };

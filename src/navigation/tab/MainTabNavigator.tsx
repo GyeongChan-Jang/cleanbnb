@@ -39,13 +39,7 @@ const TabIcons = (route: RouteProp<MainTabParamList>, focused: boolean) => {
       break;
   }
 
-  return (
-    <Ionicons
-      name={iconName}
-      size={24}
-      color={focused ? colors[theme].BLACK : colors[theme].GRAY_500}
-    />
-  );
+  return <Ionicons name={iconName} size={24} color={focused ? colors[theme].BLACK : colors[theme].GRAY_500} />;
 };
 
 const MainTabNavigator = () => {
@@ -63,6 +57,7 @@ const MainTabNavigator = () => {
         component={HomeStackNavigator}
         options={{
           title: '홈',
+          headerShown: false,
         }}
       />
       <Tab.Screen
