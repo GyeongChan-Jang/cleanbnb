@@ -1,15 +1,5 @@
 import React, { ReactNode } from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  PressableProps,
-  Dimensions,
-  StyleProp,
-  ViewStyle,
-  TextStyle,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View, PressableProps, Dimensions, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { colors } from '@/constants';
 import { ThemeMode } from '@/types/common';
 import useThemeStore from '@/store/useThemeStore';
@@ -61,9 +51,10 @@ const CustomButton = ({
 const styling = (theme: ThemeMode) =>
   StyleSheet.create({
     container: {
-      borderRadius: 10,
+      borderRadius: 100,
       justifyContent: 'center',
       flexDirection: 'row',
+      backgroundColor: 'transparent',
     },
     isValid: {
       opacity: 0.5,
@@ -94,7 +85,7 @@ const styling = (theme: ThemeMode) =>
       gap: 5,
     },
     filledPressed: {
-      backgroundColor: colors[theme].SKY_400,
+      backgroundColor: colors[theme].SKY_MAIN,
     },
     outlinedPressed: {
       backgroundColor: colors[theme].SKY_600,

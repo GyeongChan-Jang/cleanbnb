@@ -1,44 +1,34 @@
 import { colors } from '@/constants';
-import { authNavigations } from '@/constants/navigations';
+import { authNavigations, homeNavigations, mainNavigations } from '@/constants/navigations';
 import { supabase } from '@/lib/supabase';
 import { AuthStackParamList } from '@/navigation/stack/AuthStackNavigator';
 import useAuthStore from '@/store/authStore';
 import useThemeStore from '@/store/useThemeStore';
 import { ThemeMode } from '@/types/common';
-import { StackScreenProps } from '@react-navigation/stack';
+import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import React, { useState } from 'react';
-import {
-  ActivityIndicator,
-  Dimensions,
-  Platform,
-  SafeAreaView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Dimensions, Platform, SafeAreaView, StyleSheet, View } from 'react-native';
 import WebView, { WebViewMessageEvent, WebViewNavigation } from 'react-native-webview';
 import Config from 'react-native-config';
 import axios from 'axios';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { CompositeNavigationProp, NavigationProp, useNavigation } from '@react-navigation/native';
 import { User as AuthUser } from '@supabase/supabase-js';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { MainTabParamList } from '@/navigation/tab/MainTabNavigator';
 
 type KakaoLoginScreenProps = StackScreenProps<AuthStackParamList, typeof authNavigations.KAKAO>;
 
-const REDIRECT_URI = `${
-  Platform.OS === 'ios' ? 'http://localhost:3030/' : 'http://10.0.2.2:3030/'
-}auth/oauth/kakao`;
+const REDIRECT_URI = `${Platform.OS === 'ios' ? 'http://localhost:3030/' : 'http://10.0.2.2:3030/'}auth/oauth/kakao`;
 
-function KakaoLoginScreen({ route }: KakaoLoginScreenProps) {
+// type Navigation = CompositeNavigationProp<StackNavigationProp<AuthStackParamList>, BottomTabNavigationProp<MainTabParamList>>;
+
+function KakaoLoginScreen({}: KakaoLoginScreenProps) {
   const { theme } = useThemeStore();
   const styles = styling(theme);
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
   const [isLoading, setIsLoading] = useState(false);
   const [isChangeNavigate, setIsNavigateChange] = useState(true);
-
-  const setUser = useAuthStore(state => state.setUser);
-
-  const handleOnMessage = (event: WebViewMessageEvent) => {
-    console.log(event.nativeEvent.url);
-  };
+  const { setIsRegistered } = useAuthStore();
 
   const requestToken = async (code: string) => {
     const res = await axios('https://kauth.kakao.com/oauth/token', {
@@ -63,11 +53,13 @@ function KakaoLoginScreen({ route }: KakaoLoginScreenProps) {
     });
 
     // 가입된 유저인지 체크
-    const { data: user } = await supabase
-      .from('users')
-      .select('id')
-      .eq('id', data?.user?.id)
-      .single();
+    const { data: user } = await supabase.from('users').select('*').eq('id', data?.user?.id).single();
+    console.log('user', user);
+    if (user) {
+      setIsRegistered(true);
+    } else {
+      navigation.navigate(authNavigations.USER_SETUP);
+    }
 
     if (error) {
       console.error('Kakao login failed:', error);
@@ -101,7 +93,6 @@ function KakaoLoginScreen({ route }: KakaoLoginScreenProps) {
           uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${Config.KAKAO_REST_API_KEY}&redirect_uri=${REDIRECT_URI}`,
         }}
         injectedJavaScript={"window.ReactNativeWebView.postMessage('')"}
-        onMessage={handleOnMessage}
         onNavigationStateChange={handleNavigationStateChange}
       />
     </SafeAreaView>

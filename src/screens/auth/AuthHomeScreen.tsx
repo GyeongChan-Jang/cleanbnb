@@ -1,5 +1,5 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import { Dimensions, Image, SafeAreaView, StyleSheet, View } from 'react-native';
+import { Dimensions, Image, Platform, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { AuthStackParamList } from '@/navigation/stack/AuthStackNavigator';
 import { authNavigations } from '@/constants/navigations';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -39,32 +39,10 @@ const AuthHomeScreen = ({ navigation }: AuthHomeScreenProps) => {
   //   }
   // };
 
-  // WebView 사용하는 경우
-  // const handleKakaoLoginButton = async () => {
-  //   try {
-  //     const { data, error } = await supabase.auth.signInWithOAuth({
-  //       provider: 'kakao',
-  //     });
-
-  //     if (error) throw error;
-
-  //     navigation.navigate(authNavigations.KAKAO, {
-  //       url: data.url,
-  //     });
-  //   } catch (error) {
-  //     console.error('Kakao login failed:', error);
-  //     // Toast.show({
-  //     //   type: 'error',
-  //     //   text1: '카카오 로그인 실패',
-  //     //   text2: '나중에 다시 시도해주세요.',
-  //     // });
-  //   }
-  // };
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image resizeMode="contain" style={styles.image} source={require('../../assets/justsoldit.png')} />
+        <Image resizeMode="contain" style={styles.image} source={require('../../assets/cleaning_white_512.png')} />
       </View>
       <View style={styles.buttonContainer}>
         {/* {Platform.OS === 'ios' && (
@@ -93,12 +71,14 @@ const styling = (theme: ThemeMode) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      margin: 30,
       alignItems: 'center',
+      backgroundColor: colors[theme].SKY_MAIN,
     },
     imageContainer: {
       flex: 1.5,
-      width: Dimensions.get('screen').width / 2,
+      width: Dimensions.get('screen').width / 3,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     image: {
       width: '100%',
@@ -107,6 +87,7 @@ const styling = (theme: ThemeMode) =>
     buttonContainer: {
       flex: 1,
       gap: 10,
+      paddingHorizontal: 50,
       alignItems: 'center',
     },
     kakaoButtonContainer: {

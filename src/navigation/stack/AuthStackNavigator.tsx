@@ -1,5 +1,5 @@
-import { authNavigations } from '@/constants/navigations';
-import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
+import { authNavigations, mainNavigations } from '@/constants/navigations';
+import { createStackNavigator } from '@react-navigation/stack';
 import useThemeStorage from '@/hooks/useThemeStorage';
 import { colors } from '@/constants';
 import AuthHomeScreen from '@/screens/auth/AuthHomeScreen';
@@ -11,18 +11,15 @@ export type AuthStackParamList = {
   [authNavigations.KAKAO]: undefined;
   [authNavigations.APPLE]: undefined;
   [authNavigations.USER_SETUP]: undefined;
+  // [mainNavigations.HOME]: undefined; // 기존 사용자라면 메인 탭으로 이동
 };
-interface AuthStackNavigatorProps {
-  initialRouteName?: keyof AuthStackParamList;
-}
 
 const Stack = createStackNavigator<AuthStackParamList>();
 
-const AuthStackNavigator = ({ initialRouteName }: AuthStackNavigatorProps) => {
+const AuthStackNavigator = () => {
   const { theme } = useThemeStorage();
   return (
     <Stack.Navigator
-      initialRouteName={initialRouteName}
       screenOptions={{
         cardStyle: {
           backgroundColor: colors[theme].WHITE,
@@ -52,10 +49,11 @@ const AuthStackNavigator = ({ initialRouteName }: AuthStackNavigatorProps) => {
         }}
       />
       <Stack.Screen
-        name="UserSetup"
+        name={authNavigations.USER_SETUP}
         component={UserSetupScreen}
         options={{
           headerTitle: '프로필 설정',
+          headerShown: false,
         }}
       />
     </Stack.Navigator>
