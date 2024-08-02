@@ -5,6 +5,7 @@ const common = {
   SKY_400: '#41B3F0',
   SKY_500: '#4AA0E6',
   SKY_600: '#0077CC',
+  BLUE_500: '#0D8AFF',
   CORAL: '#FF9770',
   YELLOW: '#FFD670',
   PINK: '#FF70A6',

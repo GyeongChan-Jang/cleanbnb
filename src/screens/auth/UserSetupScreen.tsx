@@ -23,6 +23,11 @@ import { supabase } from '@/lib/supabase';
 import { AuthStackParamList } from '@/navigation/stack/AuthStackNavigator';
 import { ThemeMode } from '@/types/common';
 import CustomButton from '@/components/common/CustomButton';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import useModal from '@/hooks/useModal';
+import EditProfileOption from '@/components/setting/EditProfileImageOptions';
+import useImagePicker from '@/hooks/useImagePicker';
+import usePermission from '@/hooks/usePermission';
 
 type UserSetupScreenProps = StackScreenProps<AuthStackParamList, 'UserSetup'>;
 
@@ -32,16 +37,32 @@ const UserSetupScreen: React.FC<UserSetupScreenProps> = ({ navigation }) => {
   const { theme } = useThemeStore();
   const styles = styling(theme);
   const { user, setUser } = useAuthStore();
+  const { checkAndRequestPermission } = usePermission();
 
   const [role, setRole] = useState<'host' | 'cleaner'>('host');
   const [nickname, setNickname] = useState('');
   const [profileImage, setProfileImage] = useState('');
+  const imageOption = useModal();
 
   const defaultImage = require('../../assets/profile_default.png');
+
+  const handleImagePress = async () => {
+    Keyboard.dismiss();
+    const hasPermission = await checkAndRequestPermission('PHOTO');
+    if (hasPermission) {
+      imageOption.show();
+    }
+  };
 
   const imageSource = user?.user_metadata?.picture
     ? { uri: user.user_metadata.picture }
     : defaultImage;
+
+  const imagePicker = useImagePicker({
+    initialImages: imageSource ? [{ uri: imageSource }] : [],
+    mode: 'single',
+    onSettled: imageOption.hide,
+  });
 
   const handleSubmit = async () => {
     if (!user) return;
@@ -72,9 +93,14 @@ const UserSetupScreen: React.FC<UserSetupScreenProps> = ({ navigation }) => {
         keyboardShouldPersistTaps="handled">
         <View style={styles.contentContainer}>
           <View style={styles.profileContainer}>
-            <Pressable style={[styles.imageContainer, styles.emptyImageContainer]}>
-              <Image style={styles.image} resizeMode="cover" source={imageSource} />
-            </Pressable>
+            <View style={styles.imageWrapper}>
+              <Pressable style={styles.imageContainer} onPress={handleImagePress}>
+                <Image style={styles.image} resizeMode="cover" source={imageSource} />
+              </Pressable>
+              <Pressable style={styles.cameraIcon} onPress={handleImagePress}>
+                <Ionicons name="camera" size={24} color={colors[theme].GRAY_500} />
+              </Pressable>
+            </View>
           </View>
           <TextInput
             style={styles.input}
@@ -82,7 +108,6 @@ const UserSetupScreen: React.FC<UserSetupScreenProps> = ({ navigation }) => {
             value={nickname}
             onChangeText={setNickname}
           />
-
           <View style={styles.roleContainer}>
             <CustomButton
               style={{ flex: 1 }}
@@ -109,6 +134,12 @@ const UserSetupScreen: React.FC<UserSetupScreenProps> = ({ navigation }) => {
           <Text style={styles.submitButtonText}>완료</Text>
         </TouchableOpacity>
       </View>
+
+      <EditProfileOption
+        onChangeImage={imagePicker.handleChange}
+        isVisible={imageOption.isVisible}
+        hideOption={imageOption.hide}
+      />
     </KeyboardAvoidingView>
   );
 };
@@ -132,17 +163,34 @@ const styling = (theme: ThemeMode) =>
       alignItems: 'center',
       marginBottom: 20,
     },
+    imageWrapper: {
+      position: 'relative',
+      width: 100,
+      height: 100,
+    },
+    imageContainer: {
+      width: '100%',
+      height: '100%',
+      borderRadius: 50,
+      overflow: 'hidden', // 이미지가 컨테이너를 벗어나지 않도록
+    },
+    cameraIcon: {
+      position: 'absolute',
+      right: -5,
+      bottom: -5,
+      backgroundColor: colors[theme].WHITE,
+      padding: 5,
+      borderRadius: 50,
+      borderWidth: 1,
+      borderColor: colors[theme].GRAY_200,
+      zIndex: 1,
+    },
     buttonContainer: {
       paddingBottom: Platform.OS === 'ios' ? deviceHeight * 0.04 : 20, // iOS에서 하단 여백 추가
     },
     image: {
       width: '100%',
       height: '100%',
-      borderRadius: 50,
-    },
-    imageContainer: {
-      width: 100,
-      height: 100,
       borderRadius: 50,
     },
     emptyImageContainer: {
