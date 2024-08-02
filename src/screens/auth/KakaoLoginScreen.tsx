@@ -7,18 +7,28 @@ import useThemeStore from '@/store/useThemeStore';
 import { ThemeMode } from '@/types/common';
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import React, { useState } from 'react';
-import { ActivityIndicator, Dimensions, Platform, SafeAreaView, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import WebView, { WebViewMessageEvent, WebViewNavigation } from 'react-native-webview';
 import Config from 'react-native-config';
 import axios from 'axios';
 import { CompositeNavigationProp, NavigationProp, useNavigation } from '@react-navigation/native';
-import { User as AuthUser } from '@supabase/supabase-js';
+// import { User as AuthUser } from '@supabase/supabase-js';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { MainTabParamList } from '@/navigation/tab/MainTabNavigator';
+import Toast from 'react-native-toast-message';
 
 type KakaoLoginScreenProps = StackScreenProps<AuthStackParamList, typeof authNavigations.KAKAO>;
 
-const REDIRECT_URI = `${Platform.OS === 'ios' ? 'http://localhost:3030/' : 'http://10.0.2.2:3030/'}auth/oauth/kakao`;
+const REDIRECT_URI = `${
+  Platform.OS === 'ios' ? 'http://localhost:3030/' : 'http://10.0.2.2:3030/'
+}auth/oauth/kakao`;
 
 // type Navigation = CompositeNavigationProp<StackNavigationProp<AuthStackParamList>, BottomTabNavigationProp<MainTabParamList>>;
 
@@ -28,7 +38,7 @@ function KakaoLoginScreen({}: KakaoLoginScreenProps) {
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
   const [isLoading, setIsLoading] = useState(false);
   const [isChangeNavigate, setIsNavigateChange] = useState(true);
-  const { setIsRegistered } = useAuthStore();
+  const { setIsRegistered, setUser } = useAuthStore();
 
   const requestToken = async (code: string) => {
     const res = await axios('https://kauth.kakao.com/oauth/token', {
@@ -52,9 +62,23 @@ function KakaoLoginScreen({}: KakaoLoginScreenProps) {
       token: id_token,
     });
 
+    if (data.user) {
+      setUser(data.user);
+      Toast.show({
+        type: 'success',
+        text1: '카카오 로그인 성공',
+        text2: '환영합니다!',
+        position: 'bottom',
+      });
+    }
+
     // 가입된 유저인지 체크
-    const { data: user } = await supabase.from('users').select('*').eq('id', data?.user?.id).single();
-    console.log('user', user);
+    const { data: user } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', data?.user?.id)
+      .single();
+
     if (user) {
       setIsRegistered(true);
     } else {
@@ -63,11 +87,11 @@ function KakaoLoginScreen({}: KakaoLoginScreenProps) {
 
     if (error) {
       console.error('Kakao login failed:', error);
-      // Toast.show({
-      //   type: 'error',
-      //   text1: '카카오 로그인 실패',
-      //   text2: '나중에 다시 시도해주세요.',
-      // });
+      Toast.show({
+        type: 'error',
+        text1: '카카오 로그인 실패',
+        text2: '나중에 다시 시도해주세요.',
+      });
     }
   };
 

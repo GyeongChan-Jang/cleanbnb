@@ -52,8 +52,8 @@ const AuthStackNavigator = () => {
         name={authNavigations.USER_SETUP}
         component={UserSetupScreen}
         options={{
-          headerTitle: '프로필 설정',
-          headerShown: false,
+          headerTitle: '',
+          // headerShown: false,
         }}
       />
     </Stack.Navigator>

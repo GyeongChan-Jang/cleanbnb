@@ -1,5 +1,15 @@
 import React, { ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, View, PressableProps, Dimensions, StyleProp, ViewStyle, TextStyle } from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  PressableProps,
+  Dimensions,
+  StyleProp,
+  ViewStyle,
+  TextStyle,
+} from 'react-native';
 import { colors } from '@/constants';
 import { ThemeMode } from '@/types/common';
 import useThemeStore from '@/store/useThemeStore';
@@ -51,7 +61,7 @@ const CustomButton = ({
 const styling = (theme: ThemeMode) =>
   StyleSheet.create({
     container: {
-      borderRadius: 100,
+      borderRadius: 10,
       justifyContent: 'center',
       flexDirection: 'row',
       backgroundColor: 'transparent',
@@ -60,10 +70,10 @@ const styling = (theme: ThemeMode) =>
       opacity: 0.5,
     },
     filled: {
-      backgroundColor: colors[theme].SKY_600,
+      backgroundColor: colors[theme].DARK_MAIN,
     },
     outlined: {
-      borderColor: colors[theme].SKY_600,
+      borderColor: colors[theme].DARK_MAIN,
       borderWidth: 1,
     },
     large: {
@@ -85,22 +95,23 @@ const styling = (theme: ThemeMode) =>
       gap: 5,
     },
     filledPressed: {
-      backgroundColor: colors[theme].SKY_MAIN,
+      backgroundColor: colors[theme].DARK_MAIN,
+      opacity: 0.7,
     },
     outlinedPressed: {
-      backgroundColor: colors[theme].SKY_600,
+      backgroundColor: colors[theme].DARK_MAIN,
       borderWidth: 1,
       opacity: 0.5,
     },
     text: {
-      fontSize: 16,
+      fontSize: 18,
       fontWeight: '700',
     },
     filledText: {
       color: 'white',
     },
     outlinedText: {
-      color: colors[theme].SKY_600,
+      color: colors[theme].DARK_MAIN,
     },
   });
 
