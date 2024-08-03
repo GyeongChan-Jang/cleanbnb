@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  SafeAreaView,
   Pressable,
   KeyboardAvoidingView,
   Platform,
@@ -14,13 +13,10 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
-import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
-import Config from 'react-native-config';
 import { colors } from '@/constants';
 import useThemeStore from '@/store/useThemeStore';
 import useAuthStore from '@/store/authStore';
 import { supabase } from '@/lib/supabase';
-import { AuthStackParamList } from '@/navigation/stack/AuthStackNavigator';
 import { ThemeMode } from '@/types/common';
 import CustomButton from '@/components/common/CustomButton';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -30,12 +26,12 @@ import useImagePicker from '@/hooks/useImagePicker';
 import usePermission from '@/hooks/usePermission';
 
 const deviceHeight = Dimensions.get('screen').height;
-const defaultImage = require('../../assets/profile_default.png');
+const defaultImage = require('../../assets/images/profile_default.png');
 
 const UserSetupScreen = () => {
   const { theme } = useThemeStore();
   const styles = styling(theme);
-  const { user, setUser, setIsRegistered } = useAuthStore();
+  const { authUser, setIsRegistered } = useAuthStore();
   const { checkAndRequestPermission } = usePermission();
 
   const [role, setRole] = useState<'host' | 'cleaner'>('host');
@@ -51,7 +47,9 @@ const UserSetupScreen = () => {
     }
   };
 
-  const imageSource = user?.user_metadata?.picture ? user.user_metadata.picture : defaultImage;
+  const imageSource = authUser?.user_metadata?.picture
+    ? authUser.user_metadata.picture
+    : defaultImage;
 
   const imagePicker = useImagePicker({
     initialImages: [{ uri: imageSource }],
@@ -61,10 +59,10 @@ const UserSetupScreen = () => {
 
   // 프로필 이미지 초기화
   useEffect(() => {
-    if (user?.user_metadata.picture) {
-      setProfileImage(user.user_metadata.picture);
+    if (authUser?.user_metadata.picture) {
+      setProfileImage(authUser.user_metadata.picture);
     }
-  }, [user]);
+  }, [authUser]);
 
   // 프로필 이미지 선택 시 이미지 업데이트
   useEffect(() => {
@@ -74,19 +72,19 @@ const UserSetupScreen = () => {
   }, [imagePicker.imageUris]);
 
   const handleSubmit = async () => {
-    if (!user) return;
+    if (!authUser) return;
 
     try {
       const { data, error } = await supabase
         .from('users')
         .upsert({
-          id: user.id,
+          id: authUser.id,
           role,
           name,
-          email: user.user_metadata.email,
+          email: authUser.user_metadata.email,
           profile_image: profileImage,
         })
-        .eq('id', user.id);
+        .eq('id', authUser.id);
 
       setIsRegistered(true);
 
@@ -101,10 +99,10 @@ const UserSetupScreen = () => {
 
   // 이름 초기값 설정
   useEffect(() => {
-    if (user?.user_metadata.name) {
-      setName(user.user_metadata.name);
+    if (authUser?.user_metadata.name) {
+      setName(authUser.user_metadata.name);
     }
-  }, [user]);
+  }, [authUser]);
 
   return (
     <KeyboardAvoidingView
@@ -119,13 +117,13 @@ const UserSetupScreen = () => {
             <View style={styles.imageWrapper}>
               <Pressable style={styles.imageContainer} onPress={handleImagePress}>
                 {/* 프로필선택X, 카카오이미지X */}
-                {!user?.user_metadata.picture && imagePicker.imageUris.length === 0 && (
+                {!authUser?.user_metadata.picture && imagePicker.imageUris.length === 0 && (
                   <View style={[styles.emptyImageContainer, { width: 100, height: 100 }]}>
                     <Ionicons name="person" size={40} color={colors[theme].GRAY_200} />
                   </View>
                 )}
                 {/* 프로필선택X, 카카오이미지O */}
-                {imagePicker.imageUris.length === 0 && user?.user_metadata.picture && (
+                {imagePicker.imageUris.length === 0 && authUser?.user_metadata.picture && (
                   <Image style={styles.image} resizeMode="cover" source={imageSource} />
                 )}
                 {/* 프로필선택O */}
@@ -146,7 +144,7 @@ const UserSetupScreen = () => {
             style={styles.input}
             placeholder={'이름을 입력해주세요.'}
             value={name}
-            defaultValue={user?.user_metadata.name}
+            defaultValue={authUser?.user_metadata.name}
             onChangeText={setName}
           />
           <View style={styles.roleContainer}>
@@ -177,7 +175,7 @@ const UserSetupScreen = () => {
       </View>
 
       <EditProfileOption
-        onChangeImage={() => imagePicker.handleChange('user-profiles', user?.id, 'avatars')}
+        onChangeImage={() => imagePicker.handleChange('user-profiles', authUser?.id, 'avatars')}
         isVisible={imageOption.isVisible}
         hideOption={imageOption.hide}
       />

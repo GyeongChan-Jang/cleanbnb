@@ -38,6 +38,7 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-vector-icons": "^10.1.0",
     "react-native-webview": "^13.10.5",
+    "supabase": "^1.187.10",
     "zustand": "^4.5.4"
   },
   "devDependencies": {

@@ -42,7 +42,11 @@ const AuthHomeScreen = ({ navigation }: AuthHomeScreenProps) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image resizeMode="contain" style={styles.image} source={require('../../assets/cleaning_white_512.png')} />
+        <Image
+          resizeMode="contain"
+          style={styles.image}
+          source={require('../../assets/images/cleaning_white_512.png')}
+        />
       </View>
       <View style={styles.buttonContainer}>
         {/* {Platform.OS === 'ios' && (

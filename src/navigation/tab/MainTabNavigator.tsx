@@ -9,6 +9,7 @@ import ProfileStackNavigator, { ProfileStackParamList } from '../stack/ProfileNa
 import { colors } from '@/constants';
 import { SvgXml } from 'react-native-svg';
 import { svg, SvgType } from '@/assets/svg';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export type MainTabParamList = {
   [mainNavigations.HOME]: NavigatorScreenParams<HomeStackParamList>;
@@ -42,7 +43,7 @@ const TabIcons = (route: RouteProp<MainTabParamList>, focused: boolean) => {
 
   return (
     <SvgXml
-      xml={svg[iconName as SvgType]}
+      xml={focused ? svg[`${iconName}Filled` as SvgType] : svg[iconName as SvgType]}
       width="24"
       height="24"
       fill={focused ? colors[theme].BLACK : colors[theme].GRAY_500}
@@ -52,6 +53,8 @@ const TabIcons = (route: RouteProp<MainTabParamList>, focused: boolean) => {
 
 const MainTabNavigator = () => {
   const { theme } = useThemeStorage();
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -59,6 +62,12 @@ const MainTabNavigator = () => {
         tabBarActiveTintColor: colors[theme].BLACK,
         tabBarInactiveTintColor: colors[theme].GRAY_500,
         headerShown: false,
+        tabBarStyle: {
+          paddingBottom: insets.bottom + 5,
+          height: 55 + insets.bottom,
+          paddingTop: 5,
+          // elevation: 0,
+        },
       })}>
       <Tab.Screen
         name={mainNavigations.HOME}

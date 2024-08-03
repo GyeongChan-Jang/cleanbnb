@@ -38,7 +38,7 @@ function KakaoLoginScreen({}: KakaoLoginScreenProps) {
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
   const [isLoading, setIsLoading] = useState(false);
   const [isChangeNavigate, setIsNavigateChange] = useState(true);
-  const { setIsRegistered, setUser } = useAuthStore();
+  const { setIsRegistered, setAuthUser } = useAuthStore();
 
   const requestToken = async (code: string) => {
     const res = await axios('https://kauth.kakao.com/oauth/token', {
@@ -63,7 +63,7 @@ function KakaoLoginScreen({}: KakaoLoginScreenProps) {
     });
 
     if (data.user) {
-      setUser(data.user);
+      setAuthUser(data.user);
       Toast.show({
         type: 'success',
         text1: '카카오 로그인 성공',
@@ -71,7 +71,7 @@ function KakaoLoginScreen({}: KakaoLoginScreenProps) {
         position: 'bottom',
       });
     }
-
+    if (!data?.user?.id) return;
     // 가입된 유저인지 체크
     const { data: user } = await supabase
       .from('users')

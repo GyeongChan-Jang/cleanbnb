@@ -4,20 +4,22 @@ import { AuthUser, UserResponse } from '@supabase/supabase-js';
 import { create } from 'zustand';
 
 interface AuthStore {
-  user: AuthUser | null;
+  authUser: AuthUser | null; // supabase에서 제공하는 auth user
+  setAuthUser: (user: AuthUser) => void;
   isLoggedIn: boolean;
   isRegistered: boolean;
-  setUser: (user: AuthUser) => void;
   setIsRegistered: (isRegistered: boolean) => void;
+  // user: any
+  // setUser: (user: UserResponse) => void;
   // logout: () => void;
   // checkRegistration: (userId: string) => Promise<boolean>;
 }
 
 const useAuthStore = create<AuthStore>(set => ({
-  user: null,
+  authUser: null,
   isLoggedIn: false,
   isRegistered: false,
-  setUser: (user: AuthUser) => set({ user, isLoggedIn: !!user }),
+  setAuthUser: (authUser: AuthUser) => set({ authUser, isLoggedIn: !!authUser }),
   setIsRegistered: (isRegistered: boolean) => set({ isRegistered }),
   // logout: () => set({ user: null, isLoggedIn: false }),
 }));

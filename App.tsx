@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import RootNavigator from './src/navigation/root/RootNavigator';
 import Toast, { BaseToast, BaseToastProps, ErrorToast } from 'react-native-toast-message';
 import { colors } from '@/constants';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const toastConfig = {
   success: (props: BaseToastProps) => (
@@ -36,10 +37,12 @@ const toastConfig = {
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <RootNavigator />
-      <Toast config={toastConfig} />
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <RootNavigator />
+        <Toast config={toastConfig} />
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 };
 
