@@ -6,8 +6,9 @@ import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import ChatStackNavigator, { ChatStackParamList } from '../stack/ChatStackNavigator';
 import JobStackNavigator, { JobStackParamList } from '../stack/JobStackNavigator';
 import ProfileStackNavigator, { ProfileStackParamList } from '../stack/ProfileNavigator';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { colors } from '@/constants';
+import { SvgXml } from 'react-native-svg';
+import { svg, SvgType } from '@/assets/svg';
 
 export type MainTabParamList = {
   [mainNavigations.HOME]: NavigatorScreenParams<HomeStackParamList>;
@@ -20,26 +21,33 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const TabIcons = (route: RouteProp<MainTabParamList>, focused: boolean) => {
   const { theme } = useThemeStorage();
-  let iconName = '';
+  let iconName;
 
   switch (route.name) {
     case mainNavigations.HOME:
-      iconName = 'home-sharp';
+      iconName = 'home';
       break;
     case mainNavigations.JOB:
-      iconName = 'briefcase';
+      iconName = 'job';
       break;
     case mainNavigations.CHAT:
-      iconName = 'chatbubbles';
+      iconName = 'chat';
       break;
     case mainNavigations.PROFILE:
-      iconName = 'person-circle';
+      iconName = 'profile';
       break;
     default:
       break;
   }
 
-  return <Ionicons name={iconName} size={24} color={focused ? colors[theme].BLACK : colors[theme].GRAY_500} />;
+  return (
+    <SvgXml
+      xml={svg[iconName as SvgType]}
+      width="24"
+      height="24"
+      fill={focused ? colors[theme].BLACK : colors[theme].GRAY_500}
+    />
+  );
 };
 
 const MainTabNavigator = () => {
