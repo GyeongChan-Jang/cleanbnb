@@ -1,10 +1,10 @@
-import { getFormDateImages } from '@/utils';
+// useImagePicker.ts
+
 import ImagePicker from 'react-native-image-crop-picker';
-// import useMutateImages from './queries/useMutateImages';
 import { useState } from 'react';
-import { Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { ImageUri } from '@/types/domain';
+import { uploadImage } from '@/utils/uploadImage';
 
 interface UseImagePickerProps {
   initialImages: ImageUri[];
@@ -12,25 +12,8 @@ interface UseImagePickerProps {
   onSettled?: () => void;
 }
 
-const useImagePicker = ({ initialImages, mode = 'multiple', onSettled }: UseImagePickerProps) => {
-  // const uploadImages = useMutateImages();
-  const [imageUris, setImageUris] = useState(initialImages);
-
-  const addImageUris = (uris: string[]) => {
-    if (imageUris.length + uris.length > 5) {
-      Alert.alert('이미지 개수 초과', '추가 가능한 이미지는 최대 5개입니다.');
-      return;
-    }
-    setImageUris(prev => [...prev, ...uris.map(uri => ({ uri }))]);
-  };
-
-  const replaceImageUri = (uri: string[]) => {
-    if (uri.length > 1) {
-      Alert.alert('이미지 개수 초과', '추가 가능한 이미지는 최대 1개입니다.');
-      return;
-    }
-    setImageUris([...uri.map(uri => ({ uri }))]);
-  };
+const useImagePicker = ({ initialImages, mode = 'single', onSettled }: UseImagePickerProps) => {
+  const [imageUris, setImageUris] = useState<ImageUri[]>(initialImages);
 
   const deleteImageUri = (uri: string) => {
     const newImageUris = imageUris.filter(image => image.uri !== uri);
@@ -44,35 +27,64 @@ const useImagePicker = ({ initialImages, mode = 'multiple', onSettled }: UseImag
     setImageUris(copyImageUris);
   };
 
-  const handleChange = () => {
-    ImagePicker.openPicker({
-      mediaType: 'photo',
-      multiple: true,
-      includeBase64: true,
-      maxFiles: mode === 'multiple' ? 5 : 1,
-      cropperChooseText: '완료',
-      cropperCancelText: '취소',
-    })
-      .then(images => {
-        const formData = getFormDateImages(images);
-        console.log('formData', formData);
-
-        // uploadImages.mutate(formData, {
-        //   onSuccess: data => (mode === 'multiple' ? addImageUris(data) : replaceImageUri(data)),
-        //   onSettled: () => onSettled && onSettled(),
-        // });
-      })
-      .catch(error => {
-        // 픽커를 누르고 취소하면 E_PICKER_CANCELLED 에러가 뜸 -> 이 에러는 무시
-        if (error.code !== 'E_PICKER_CANCELLED') {
-          Toast.show({
-            type: 'error',
-            text1: '캘러리를 열 수 없어요.',
-            text2: '권한을 허용했는지 확인해주세요.',
-            position: 'bottom',
-          });
-        }
+  const handleChange = async (
+    bucketName: string | undefined,
+    userId: string | undefined,
+    folderName: string = '',
+  ) => {
+    if (!bucketName) return console.error('bucketName is required');
+    if (!userId) {
+      Toast.show({
+        type: 'error',
+        text1: '로그인이 필요해요.',
+        text2: '로그인 후 이용해주세요.',
+        position: 'bottom',
       });
+      return;
+    }
+
+    try {
+      const images = await ImagePicker.openPicker({
+        mediaType: 'photo',
+        multiple: mode === 'multiple',
+        cropping: mode === 'single',
+        cropperChooseText: '완료',
+        cropperCancelText: '취소',
+      });
+
+      const uploadPromises = (Array.isArray(images) ? images : [images]).map(image =>
+        uploadImage(bucketName, userId, image, folderName),
+      );
+
+      const uploadedUrls = await Promise.all(uploadPromises);
+
+      const validUrls = uploadedUrls.filter((url): url is string => url !== null);
+
+      if (validUrls.length > 0) {
+        if (mode === 'single') {
+          setImageUris([{ uri: validUrls[0] }]);
+        } else {
+          setImageUris(prev => [...prev, ...validUrls.map(uri => ({ uri }))]);
+        }
+        if (onSettled) onSettled();
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: '이미지 업로드 실패',
+          text2: '다시 시도해주세요.',
+          position: 'bottom',
+        });
+      }
+    } catch (error: any) {
+      if (error.code !== 'E_PICKER_CANCELLED') {
+        Toast.show({
+          type: 'error',
+          text1: '갤러리를 열 수 없어요.',
+          text2: '권한을 허용했는지 확인해주세요.',
+          position: 'bottom',
+        });
+      }
+    }
   };
 
   return {
