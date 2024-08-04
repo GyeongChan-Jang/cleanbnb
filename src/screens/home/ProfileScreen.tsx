@@ -1,16 +1,21 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
-import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import useThemeStore from '@/store/useThemeStore';
-import { colors } from '@/constants';
+import { colors, profileNavigations } from '@/constants';
 import { ThemeMode } from '@/types/common';
 import useUser from '@/hooks/useUser';
 import PropertyAddCard from '@/components/property/PropertyAddCard';
-import MyProperty from '@/components/property/MyProperty';
+import { CompoundList } from '@/components/common/CompoundList';
+import { SvgXml } from 'react-native-svg';
+import { svg } from '@/assets/svg';
+import { StackScreenProps } from '@react-navigation/stack';
+import { ProfileStackParamList } from '@/navigation/stack/ProfileNavigator';
 
-const ProfileScreen = () => {
+type ProfileScreenProps = StackScreenProps<ProfileStackParamList>;
+
+const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const { theme } = useThemeStore();
   const styles = styling(theme);
   const { user } = useUser();
@@ -54,10 +59,24 @@ const ProfileScreen = () => {
       />
 
       <View style={styles.menuContainer}>
-        <Text style={styles.menuTitle}>나의 숙소</Text>
+        <Text style={styles.menuTitle}>나의 정보</Text>
       </View>
-      {/* 나의 숙소 */}
-      <MyProperty />
+      {/* 나의 정보 */}
+      {/* {user?.role === userRoles.host ? <MyProperty /> : <MyJobProfile />} */}
+      <CompoundList onItemPress={() => navigation.navigate(profileNavigations.PROPERTY)}>
+        <CompoundList.Item
+          id="1"
+          icon={<SvgXml width="24" height="24" xml={svg.property} color={colors[theme].GRAY_500} />}
+          title="숙소 관리"
+        />
+        <CompoundList.Divider />
+        {/* <CompoundList.Item
+          id="2"
+          icon={<MaterialIcons name="person" size={24} color={colors[theme].GRAY_500} />}
+          title="프로필"
+        />
+        <CompoundList.Divider /> */}
+      </CompoundList>
     </SafeAreaView>
   );
 };
@@ -121,11 +140,11 @@ const styling = (theme: ThemeMode) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginVertical: 10,
+      marginTop: 20,
+      marginBottom: 10,
     },
     menuTitle: {
       fontSize: 20,
       fontWeight: 'bold',
-      marginVertical: 10,
     },
   });

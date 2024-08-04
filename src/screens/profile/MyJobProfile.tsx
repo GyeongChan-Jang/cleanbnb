@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native';
 import React from 'react';
 
-const MyProperty = () => {
+const MyJobProfile = () => {
   return (
     <View>
-      <Text></Text>
+      <Text>MyJobProfile</Text>
     </View>
   );
 };
 
-export default MyProperty;
+export default MyJobProfile;

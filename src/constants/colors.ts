@@ -23,7 +23,7 @@ const colors = {
     GRAY_300: '#D8D8D8',
     GRAY_500: '#8E8E8E',
     GRAY_700: '#575757',
-    BLACK: '#333333',
+    BLACK: '#222222',
     ...common,
   },
   dark: {
