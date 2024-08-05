@@ -36,7 +36,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
         {/* 헤더 */}
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>프로필</Text>
@@ -106,10 +106,14 @@ const styling = (theme: ThemeMode) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 20,
       backgroundColor: 'white',
     },
+    scrollViewContent: {
+      paddingHorizontal: 20,
+      flexGrow: 1,
+    },
     headerContainer: {
+      // paddingHorizontal: 20,
       flexDirection: 'row',
       justifyContent: 'space-between',
       paddingVertical: 36,
