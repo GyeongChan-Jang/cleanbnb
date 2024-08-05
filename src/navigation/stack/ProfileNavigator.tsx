@@ -7,11 +7,12 @@ import {
 } from '@/constants/navigations';
 import ChatScreen from '@/screens/home/ChatScreen';
 import ProfileScreen from '@/screens/home/ProfileScreen';
-import PropertyStackNavigator from './PropertyNavigator';
+import PropertyStackNavigator, { PropertyStackParamList } from './PropertyNavigator';
+import { NavigatorScreenParams } from '@react-navigation/native';
 
 export type ProfileStackParamList = {
   [profileNavigations.PROFILE_MAIN]: undefined;
-  [profileNavigations.PROPERTY]: undefined;
+  [profileNavigations.PROPERTY]: NavigatorScreenParams<PropertyStackParamList>;
 };
 
 const Stack = createStackNavigator<ProfileStackParamList>();

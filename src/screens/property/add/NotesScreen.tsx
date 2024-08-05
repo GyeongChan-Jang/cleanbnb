@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native';
 import React from 'react';
 
-const AddPropertyScreen = () => {
+const NotesScreen = () => {
   return (
     <View>
-      <Text>AddPropertyScreen</Text>
+      <Text>NotesScreen</Text>
     </View>
   );
 };
 
-export default AddPropertyScreen;
+export default NotesScreen;

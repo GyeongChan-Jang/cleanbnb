@@ -1,17 +1,19 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import useThemeStore from '@/store/useThemeStore';
-import { colors, profileNavigations } from '@/constants';
+import { colors, profileNavigations, propertyNavigations } from '@/constants';
 import { ThemeMode } from '@/types/common';
 import useUser from '@/hooks/useUser';
 import PropertyAddCard from '@/components/property/PropertyAddCard';
 import { CompoundList } from '@/components/common/CompoundList';
 import { SvgXml } from 'react-native-svg';
 import { svg } from '@/assets/svg';
-import { StackScreenProps } from '@react-navigation/stack';
+import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import { ProfileStackParamList } from '@/navigation/stack/ProfileNavigator';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
+import { PropertyStackParamList } from '@/navigation/stack/PropertyNavigator';
 
 type ProfileScreenProps = StackScreenProps<ProfileStackParamList>;
 
@@ -20,63 +22,80 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const styles = styling(theme);
   const { user } = useUser();
 
+  const onCardPress = () => {
+    navigation.navigate(profileNavigations.PROPERTY, {
+      screen: propertyNavigations.ADD_PROPERTY,
+    });
+  };
+
+  const onPropertyPress = () => {
+    navigation.navigate(profileNavigations.PROPERTY, {
+      screen: propertyNavigations.MY_PROPERTY,
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* 헤더 */}
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>프로필</Text>
-        <Ionicons name="notifications-outline" size={32} />
-      </View>
-      {/* 프로필 */}
-      <View style={styles.profileContainer}>
-        <View style={styles.profile}>
-          <View style={styles.profileImageContainer}>
-            <Image
-              style={styles.profileImage}
-              source={
-                user?.profile_image
-                  ? { uri: user?.profile_image }
-                  : require('../../assets/images/profile_default.png')
-              }
-            />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* 헤더 */}
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerText}>프로필</Text>
+          <Ionicons name="notifications-outline" size={32} />
+        </View>
+        {/* 프로필 */}
+        <View style={styles.profileContainer}>
+          <View style={styles.profile}>
+            <View style={styles.profileImageContainer}>
+              <Image
+                style={styles.profileImage}
+                source={
+                  user?.profile_image
+                    ? { uri: user?.profile_image }
+                    : require('../../assets/images/profile_default.png')
+                }
+              />
+            </View>
+            <View style={styles.profileTextContainer}>
+              <Text style={styles.profileTextTitle}>{user?.name}</Text>
+              <Text style={{ color: colors[theme].GRAY_700 }}>프로필 보기</Text>
+            </View>
           </View>
-          <View style={styles.profileTextContainer}>
-            <Text style={styles.profileTextTitle}>{user?.name}</Text>
-            <Text style={{ color: colors[theme].GRAY_700 }}>프로필 보기</Text>
+          <View style={styles.arrowRight}>
+            <FontAwesome name="angle-right" size={30} />
           </View>
         </View>
-        <View style={styles.arrowRight}>
-          <FontAwesome name="angle-right" size={30} />
-        </View>
-      </View>
 
-      <View style={styles.divider} />
+        <View style={styles.divider} />
 
-      {/* 숙소 등록 Card */}
-      <PropertyAddCard
-        title="당신의 숙소를 청소하세요."
-        description={['간단히 숙소를 등록하고', '숙소 청소 클리너를 모집하세요.']}
-      />
-
-      <View style={styles.menuContainer}>
-        <Text style={styles.menuTitle}>나의 정보</Text>
-      </View>
-      {/* 나의 정보 */}
-      {/* {user?.role === userRoles.host ? <MyProperty /> : <MyJobProfile />} */}
-      <CompoundList onItemPress={() => navigation.navigate(profileNavigations.PROPERTY)}>
-        <CompoundList.Item
-          id="1"
-          icon={<SvgXml width="24" height="24" xml={svg.property} color={colors[theme].GRAY_500} />}
-          title="숙소 관리"
+        {/* 숙소 등록 Card */}
+        <PropertyAddCard
+          onPress={onCardPress}
+          title="당신의 숙소를 청소하세요."
+          description={['간단히 숙소를 등록하고', '숙소 청소 클리너를 모집하세요.']}
         />
-        <CompoundList.Divider />
-        {/* <CompoundList.Item
+
+        <View style={styles.menuContainer}>
+          <Text style={styles.menuTitle}>나의 정보</Text>
+        </View>
+        {/* 나의 정보 */}
+        {/* {user?.role === userRoles.host ? <MyProperty /> : <MyJobProfile />} */}
+        <CompoundList onItemPress={onPropertyPress}>
+          <CompoundList.Item
+            id="1"
+            icon={
+              <SvgXml width="24" height="24" xml={svg.property} color={colors[theme].GRAY_500} />
+            }
+            title="숙소 관리"
+          />
+          <CompoundList.Divider />
+          {/* <CompoundList.Item
           id="2"
           icon={<MaterialIcons name="person" size={24} color={colors[theme].GRAY_500} />}
           title="프로필"
         />
         <CompoundList.Divider /> */}
-      </CompoundList>
+        </CompoundList>
+      </ScrollView>
     </SafeAreaView>
   );
 };

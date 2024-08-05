@@ -16,6 +16,14 @@ const profileNavigations = { PROFILE_MAIN: 'ProfileMain', PROPERTY: 'Property' }
 const propertyNavigations = {
   MY_PROPERTY: 'MyProperty',
   ADD_PROPERTY: 'AddProperty',
+  PROPERTY_TYPE: 'PropertyType',
+  BASIC_INFO: 'BasicInfo',
+  LOCATION: 'Location',
+  CLEANING_TOOLS: 'CleaningTools',
+  CLEANING_AREAS: 'CleaningAreas',
+  GUIDELINE_PHOTOS: 'GuidelinePhotos',
+  SPECIAL_NOTES: 'SpecialNotes',
+  PRICING: 'Pricing',
 } as const;
 
 const authNavigations = {

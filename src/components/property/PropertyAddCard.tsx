@@ -1,18 +1,19 @@
 import { colors } from '@/constants';
 import useThemeStore from '@/store/useThemeStore';
 import { ThemeMode } from '@/types/common';
-import { View, Text, StyleSheet, Image, Platform } from 'react-native';
+import { View, Text, StyleSheet, Image, Platform, Pressable } from 'react-native';
 interface PropertyAddCardProps {
   title: string;
   description: string[];
   image?: string;
+  onPress?: () => void;
 }
 
-const PropertyAddCard = ({ title, description, image }: PropertyAddCardProps) => {
+const PropertyAddCard = ({ title, description, image, onPress }: PropertyAddCardProps) => {
   const { theme } = useThemeStore();
   const styles = styling(theme);
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={onPress}>
       <View style={styles.textContainer}>
         <Text style={styles.titleText}>{title}</Text>
         {description.map((line, index) => (
@@ -24,7 +25,7 @@ const PropertyAddCard = ({ title, description, image }: PropertyAddCardProps) =>
       <View style={styles.ImageContainer}>
         <Image style={styles.image} source={require('../../assets/images/building.png')} />
       </View>
-    </View>
+    </Pressable>
   );
 };
 
