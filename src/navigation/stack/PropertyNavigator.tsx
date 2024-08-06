@@ -35,7 +35,6 @@ const PropertyStackNavigator = () => {
 
       <Stack.Screen name={propertyNavigations.ADD_PROPERTY} component={AddPropertyScreen} />
 
-      <Stack.Screen name={propertyNavigations.MY_PROPERTY} component={MyPropertyScreen} />
       <Stack.Screen name={propertyNavigations.PROPERTY_TYPE} component={PropertyTypeScreen} />
       <Stack.Screen name={propertyNavigations.BASIC_INFO} component={BasicInfoScreen} />
       <Stack.Screen name={propertyNavigations.LOCATION} component={LocationScreen} />
