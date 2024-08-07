@@ -91,6 +91,7 @@ function KakaoLoginScreen({}: KakaoLoginScreenProps) {
         type: 'error',
         text1: '카카오 로그인 실패',
         text2: '나중에 다시 시도해주세요.',
+        position: 'bottom',
       });
     }
   };

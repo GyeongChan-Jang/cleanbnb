@@ -1,3 +1,4 @@
+import PropertyBottomTab from '@/components/property/BottomTab/PropertyBottomTab';
 import { propertyNavigations } from '@/constants/navigations';
 import AddPropertyScreen from '@/screens/property/add/AddPropertyScreen';
 import BasicInfoScreen from '@/screens/property/add/BasicInfoScreen';
@@ -10,6 +11,7 @@ import PricingScreen from '@/screens/property/add/PricingScreen';
 import PropertyTypeScreen from '@/screens/property/add/PropertyTypeScreen';
 import MyPropertyScreen from '@/screens/property/MyPropertyScreen';
 import { createStackNavigator } from '@react-navigation/stack';
+import { View } from 'react-native';
 
 export type PropertyStackParamList = {
   [propertyNavigations.MY_PROPERTY]: undefined;
@@ -32,10 +34,25 @@ const PropertyStackNavigator = () => {
         headerShown: false,
       }}>
       <Stack.Screen name={propertyNavigations.MY_PROPERTY} component={MyPropertyScreen} />
+      {/* <Stack.Screen name={propertyNavigations.ADD_PROPERTY} component={AddPropertyScreen} /> */}
 
-      <Stack.Screen name={propertyNavigations.ADD_PROPERTY} component={AddPropertyScreen} />
+      <Stack.Screen
+        name={propertyNavigations.PROPERTY_TYPE}
+        options={{
+          headerTitle: '숙소 유형',
+        }}>
+        {props => (
+          <View style={{ flex: 1 }}>
+            {/* <PropertyTypeScreen {...props} /> */}
+            <PropertyTypeScreen />
+            <PropertyBottomTab
+              onNext={() => props.navigation.navigate(propertyNavigations.BASIC_INFO)}
+            />
+          </View>
+        )}
+      </Stack.Screen>
 
-      <Stack.Screen name={propertyNavigations.PROPERTY_TYPE} component={PropertyTypeScreen} />
+      {/* <Stack.Screen name={propertyNavigations.PROPERTY_TYPE} component={PropertyTypeScreen} /> */}
       <Stack.Screen name={propertyNavigations.BASIC_INFO} component={BasicInfoScreen} />
       <Stack.Screen name={propertyNavigations.LOCATION} component={LocationScreen} />
       <Stack.Screen name={propertyNavigations.CLEANING_TOOLS} component={CleaningToolsScreen} />

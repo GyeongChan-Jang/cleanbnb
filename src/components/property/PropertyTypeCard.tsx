@@ -18,7 +18,7 @@ const PropertyTypeCard = ({ type, icon, isSelected, onPress }: PropertyTypeCardP
   return (
     <TouchableOpacity style={[styles.card, isSelected && styles.selectedCard]} onPress={onPress}>
       <View style={styles.iconContainer}>
-        <Ionicons name={icon} size={24} color={isSelected ? colors[theme].SKY_MAIN : '#484848'} />
+        <Ionicons name={icon} size={30} color={isSelected ? colors[theme].SKY_MAIN : '#484848'} />
       </View>
       <Text style={[styles.typeText, isSelected && styles.selectedText]}>{type}</Text>
     </TouchableOpacity>
@@ -46,7 +46,7 @@ const styling = (theme: ThemeMode) =>
       marginBottom: 8,
     },
     typeText: {
-      fontSize: 14,
+      fontSize: 20,
       color: '#484848',
       textAlign: 'center',
     },

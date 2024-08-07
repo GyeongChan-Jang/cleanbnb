@@ -17,7 +17,7 @@ const MyPropertyScreen = ({ navigation }: MyPropertyScreenProps) => {
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const onAddPropertyPress = () => {
-    navigation.navigate(propertyNavigations.ADD_PROPERTY);
+    navigation.navigate(propertyNavigations.PROPERTY_TYPE);
   };
 
   return (
