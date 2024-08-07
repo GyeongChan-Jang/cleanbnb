@@ -1,6 +1,8 @@
 const common = {
   // SKY_MAIN: '#70D6FF',
   SKY_MAIN: '#5CCEF8',
+  SKY_100: '#F0F8FF',
+  SKY_200: '#94E1FF',
   SKY_300: '#9EE5FF',
   SKY_400: '#41B3F0',
   SKY_500: '#4AA0E6',
