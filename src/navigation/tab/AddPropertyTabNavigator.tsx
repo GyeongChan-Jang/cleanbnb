@@ -49,7 +49,8 @@ const CustomTabBar = ({ state, descriptors, navigation }: CustomTabBarProps) => 
         <TouchableOpacity
           onPress={() => {
             if (state.index > 0) {
-              navigation.goBack();
+              // 이전 화면으로 이동
+              navigation.navigate(state.routes[state.index - 1].name);
             } else {
               // 첫 화면에서 뒤로 가기를 누르면 전체 AddProperty 네비게이터를 벗어남
               navigation.navigate('MainTab');
