@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import { addPropertyNavigations } from '@/constants';
+import { addPropertyNavigations, colors } from '@/constants';
 import BasicInfoScreen from '@/screens/property/add/BasicInfoScreen';
 import CleaningAreasScreen from '@/screens/property/add/CleaningAreasScreen';
 import CleaningToolsScreen from '@/screens/property/add/CleaningToolsScreen';
@@ -10,7 +10,11 @@ import NotesScreen from '@/screens/property/add/NotesScreen';
 import PricingScreen from '@/screens/property/add/PricingScreen';
 import PropertyTypeScreen from '@/screens/property/add/PropertyTypeScreen';
 import { BottomTabBarProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { ParamListBase, TabNavigationState, useNavigation } from '@react-navigation/native';
+import { ParamListBase, TabNavigationState } from '@react-navigation/native';
+import { ThemeMode } from '@/types/common';
+import useThemeStore from '@/store/useThemeStore';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import CustomButton from '@/components/common/CustomButton';
 
 const Tab = createBottomTabNavigator();
 
@@ -33,17 +37,25 @@ export type AddPropertyTabParamList = {
   [addPropertyNavigations.PRICING]: undefined;
 };
 
-const ProgressBar = ({ progress }: ProgressBarProps) => (
-  <View style={styles.progressBarContainer}>
-    <View style={[styles.progressBar, { width: `${progress}%` }]} />
-  </View>
-);
+const ProgressBar = ({ progress }: ProgressBarProps) => {
+  const { theme } = useThemeStore();
+  const styles = styling(theme);
+  return (
+    <View style={styles.progressBarContainer}>
+      <View style={[styles.progressBar, { width: `${progress}%` }]} />
+    </View>
+  );
+};
 
 const CustomTabBar = ({ state, descriptors, navigation }: CustomTabBarProps) => {
+  const { theme } = useThemeStore();
+  const styles = styling(theme);
   const progress = ((state.index + 1) / state.routes.length) * 100;
 
+  console.log(descriptors);
+
   return (
-    <View>
+    <View style={styles.bottomTabContainer}>
       <ProgressBar progress={progress} />
       <View style={styles.tabContainer}>
         <TouchableOpacity
@@ -59,7 +71,7 @@ const CustomTabBar = ({ state, descriptors, navigation }: CustomTabBarProps) => 
           style={styles.tabButton}>
           <Text style={styles.tabButtonText}>뒤로</Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        <CustomButton
           onPress={() => {
             if (state.index < state.routes.length - 1) {
               navigation.navigate(state.routes[state.index + 1].name);
@@ -69,11 +81,12 @@ const CustomTabBar = ({ state, descriptors, navigation }: CustomTabBarProps) => 
               navigation.navigate('MainTab');
             }
           }}
+          label="다음"
           style={styles.tabButton}>
           <Text style={styles.tabButtonText}>
             {state.index === state.routes.length - 1 ? '완료' : '다음'}
           </Text>
-        </TouchableOpacity>
+        </CustomButton>
       </View>
     </View>
   );
@@ -86,6 +99,7 @@ const AddPropertyTabNavigator = () => {
       screenOptions={{
         headerShown: true,
         headerLeft: () => null, // 뒤로 가기 버튼 제거
+        headerTitle: '', // 타이틀 제거
       }}>
       <Tab.Screen
         name={addPropertyNavigations.PROPERTY_TYPE}
@@ -131,33 +145,41 @@ const AddPropertyTabNavigator = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  progressBarContainer: {
-    width: '100%',
-    height: 4,
-    backgroundColor: '#e0e0e0',
-  },
-  progressBar: {
-    height: '100%',
-    backgroundColor: '#007AFF',
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: 'white',
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-  },
-  tabButton: {
-    flex: 1,
-    padding: 15,
-    alignItems: 'center',
-  },
-  tabButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#007AFF',
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    bottomTabContainer: {
+      height: Dimensions.get('window').height * 0.15,
+    },
+    progressBarContainer: {
+      width: '100%',
+      height: 5,
+      backgroundColor: colors[theme].GRAY_100,
+    },
+    progressBar: {
+      height: '100%',
+      backgroundColor: colors[theme].SKY_MAIN,
+    },
+    tabContainer: {
+      padding: 20,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      backgroundColor: colors[theme].WHITE,
+      borderTopWidth: 1,
+      borderTopColor: '#e0e0e0',
+      height: '100%',
+    },
+    tabButton: {
+      borderRadius: 10,
+      width: 70,
+      aspectRatio: 1.5,
+      padding: 15,
+      alignItems: 'center',
+    },
+    tabButtonText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: colors[theme].BLACK,
+    },
+  });
 
 export default AddPropertyTabNavigator;

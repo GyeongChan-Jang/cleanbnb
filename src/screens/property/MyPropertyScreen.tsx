@@ -22,9 +22,7 @@ const MyPropertyScreen = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<Navigation>();
 
-  const onAddPropertyPress = () => {
-    navigation.navigate(rootNavigations.ADD_PROPERTY);
-  };
+  const onAddPropertyPress = () => navigation.navigate(rootNavigations.ADD_PROPERTY);
 
   return (
     <SafeAreaView style={styles.container}>

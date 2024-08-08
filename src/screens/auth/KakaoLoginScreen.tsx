@@ -1,11 +1,11 @@
 import { colors } from '@/constants';
-import { authNavigations, homeNavigations, mainNavigations } from '@/constants/navigations';
+import { authNavigations } from '@/constants/navigations';
 import { supabase } from '@/lib/supabase';
 import { AuthStackParamList } from '@/navigation/stack/AuthStackNavigator';
 import useAuthStore from '@/store/authStore';
 import useThemeStore from '@/store/useThemeStore';
 import { ThemeMode } from '@/types/common';
-import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
+import { StackScreenProps } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
@@ -15,13 +15,10 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import WebView, { WebViewMessageEvent, WebViewNavigation } from 'react-native-webview';
+import WebView, { WebViewNavigation } from 'react-native-webview';
 import Config from 'react-native-config';
 import axios from 'axios';
-import { CompositeNavigationProp, NavigationProp, useNavigation } from '@react-navigation/native';
-// import { User as AuthUser } from '@supabase/supabase-js';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { MainTabParamList } from '@/navigation/tab/MainTabNavigator';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 
 type KakaoLoginScreenProps = StackScreenProps<AuthStackParamList, typeof authNavigations.KAKAO>;
@@ -29,8 +26,6 @@ type KakaoLoginScreenProps = StackScreenProps<AuthStackParamList, typeof authNav
 const REDIRECT_URI = `${
   Platform.OS === 'ios' ? 'http://localhost:3030/' : 'http://10.0.2.2:3030/'
 }auth/oauth/kakao`;
-
-// type Navigation = CompositeNavigationProp<StackNavigationProp<AuthStackParamList>, BottomTabNavigationProp<MainTabParamList>>;
 
 function KakaoLoginScreen({}: KakaoLoginScreenProps) {
   const { theme } = useThemeStore();

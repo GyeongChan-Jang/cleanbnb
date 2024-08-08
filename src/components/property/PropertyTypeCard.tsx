@@ -29,9 +29,10 @@ const styling = (theme: ThemeMode) =>
   StyleSheet.create({
     card: {
       width: '45%',
-      aspectRatio: 1,
+      aspectRatio: 1.5,
       backgroundColor: 'white',
       borderRadius: 10,
+      gap: 5,
       justifyContent: 'center',
       alignItems: 'center',
       marginBottom: 20,
@@ -40,6 +41,7 @@ const styling = (theme: ThemeMode) =>
     },
     selectedCard: {
       borderColor: colors[theme].SKY_MAIN,
+      borderWidth: 3,
       backgroundColor: colors[theme].SKY_100,
     },
     iconContainer: {
@@ -52,6 +54,7 @@ const styling = (theme: ThemeMode) =>
     },
     selectedText: {
       color: colors[theme].SKY_MAIN,
+      fontSize: 22,
       fontWeight: 'bold',
     },
   });
