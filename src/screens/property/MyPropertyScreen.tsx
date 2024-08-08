@@ -1,23 +1,29 @@
-import { View, Text, ScrollView, StyleSheet, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated } from 'react-native';
 import React, { useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeMode } from '@/types/common';
 import useThemeStore from '@/store/useThemeStore';
-import { colors, propertyNavigations } from '@/constants';
+import { colors, rootNavigations } from '@/constants';
 import PropertyCard from '@/components/property/PropertyCard';
 import FloatingButton from '@/components/common/FloatingButton';
-import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { PropertyStackParamList } from '@/navigation/stack/PropertyNavigator';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/navigation/root/RootNavigator';
 
-type MyPropertyScreenProps = StackScreenProps<PropertyStackParamList>;
+type Navigation = CompositeNavigationProp<
+  StackNavigationProp<RootStackParamList>,
+  StackNavigationProp<PropertyStackParamList>
+>;
 
-const MyPropertyScreen = ({ navigation }: MyPropertyScreenProps) => {
+const MyPropertyScreen = () => {
   const { theme } = useThemeStore();
   const styles = styling(theme);
   const scrollY = useRef(new Animated.Value(0)).current;
+  const navigation = useNavigation<Navigation>();
 
   const onAddPropertyPress = () => {
-    navigation.navigate(propertyNavigations.PROPERTY_TYPE);
+    navigation.navigate(rootNavigations.ADD_PROPERTY);
   };
 
   return (

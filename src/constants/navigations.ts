@@ -1,3 +1,8 @@
+const rootNavigations = {
+  MAIN_TAB: 'MainTab',
+  ADD_PROPERTY: 'AddProperty',
+} as const
+
 const mainNavigations = {
   HOME: 'Home',
   CHAT: 'Chat',
@@ -13,8 +18,7 @@ const jobNavigations = { JOB_MAIN: 'JobMain' } as const;
 
 const profileNavigations = { PROFILE_MAIN: 'ProfileMain', PROPERTY: 'Property' } as const;
 
-const propertyNavigations = {
-  MY_PROPERTY: 'MyProperty',
+const addPropertyNavigations = {
   ADD_PROPERTY: 'AddProperty',
   PROPERTY_TYPE: 'PropertyType',
   BASIC_INFO: 'BasicInfo',
@@ -24,6 +28,10 @@ const propertyNavigations = {
   GUIDELINE_PHOTOS: 'GuidelinePhotos',
   SPECIAL_NOTES: 'SpecialNotes',
   PRICING: 'Pricing',
+} as const
+
+const propertyNavigations = {
+  MY_PROPERTY: 'MyProperty',
 } as const;
 
 const authNavigations = {
@@ -33,4 +41,4 @@ const authNavigations = {
   USER_SETUP: 'UserSetup',
 } as const;
 
-export { mainNavigations, homeNavigations, chatNavigations, jobNavigations, profileNavigations, authNavigations, propertyNavigations };
+export { mainNavigations, homeNavigations, chatNavigations, jobNavigations, profileNavigations, authNavigations, propertyNavigations, addPropertyNavigations, rootNavigations };

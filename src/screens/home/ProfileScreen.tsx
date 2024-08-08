@@ -11,7 +11,7 @@ import { CompoundList } from '@/components/common/CompoundList';
 import { SvgXml } from 'react-native-svg';
 import { svg } from '@/assets/svg';
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
-import { ProfileStackParamList } from '@/navigation/stack/ProfileNavigator';
+import { ProfileStackParamList } from '@/navigation/stack/ProfileStackNavigator';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import { PropertyStackParamList } from '@/navigation/stack/PropertyNavigator';
 
@@ -23,9 +23,9 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const { user } = useUser();
 
   const onCardPress = () => {
-    navigation.navigate(profileNavigations.PROPERTY, {
-      screen: propertyNavigations.ADD_PROPERTY,
-    });
+    // navigation.navigate(profileNavigations.PROPERTY, {
+    //   screen: propertyNavigations.ADD_PROPERTY,
+    // });
   };
 
   const onPropertyPress = () => {

@@ -5,7 +5,7 @@ import { mainNavigations } from '@/constants/navigations';
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import ChatStackNavigator, { ChatStackParamList } from '../stack/ChatStackNavigator';
 import JobStackNavigator, { JobStackParamList } from '../stack/JobStackNavigator';
-import ProfileStackNavigator, { ProfileStackParamList } from '../stack/ProfileNavigator';
+import ProfileStackNavigator, { ProfileStackParamList } from '../stack/ProfileStackNavigator';
 import { colors } from '@/constants';
 import { SvgXml } from 'react-native-svg';
 import { svg, SvgType } from '@/assets/svg';
@@ -66,7 +66,6 @@ const MainTabNavigator = () => {
           paddingBottom: insets.bottom + 5,
           height: 55 + insets.bottom,
           paddingTop: 5,
-          // elevation: 0,
         },
       })}>
       <Tab.Screen
