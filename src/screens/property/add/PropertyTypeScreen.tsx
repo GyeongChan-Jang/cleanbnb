@@ -5,6 +5,7 @@ import { colors } from '@/constants';
 import useThemeStore from '@/store/useThemeStore';
 import PropertyTypeCard from '@/components/property/PropertyTypeCard';
 import { PropertyType } from '@/types/property';
+import useAddPropertyStore from '@/store/useAddPropertyStore';
 
 const propertyTypes: PropertyType[] = [
   { id: '1', type: '아파트', icon: 'business-outline' },
@@ -25,21 +26,22 @@ const propertyTypes: PropertyType[] = [
 const PropertyTypeScreen = () => {
   const { theme } = useThemeStore();
   const styles = styling(theme);
-  const [selectedType, setSelectedType] = useState('');
+
+  const { propertyType, setPropertyType } = useAddPropertyStore();
 
   const renderItem = ({ item }: { item: PropertyType }) => (
     <PropertyTypeCard
       type={item.type}
       icon={item.icon}
-      isSelected={selectedType === item.id}
-      onPress={() => setSelectedType(item.id)}
+      isSelected={propertyType === item.id}
+      onPress={() => setPropertyType(item.id)}
     />
   );
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>숙소 유형을 선택하세요.</Text>
+        <Text style={styles.headerText}>숙소 유형을 선택해주세요.</Text>
       </View>
       <FlatList
         data={propertyTypes}
@@ -65,7 +67,7 @@ const styling = (theme: ThemeMode) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 20,
+      marginBottom: 10,
       padding: 20,
     },
     headerText: {

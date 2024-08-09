@@ -22,11 +22,11 @@ interface CustomButtonProps extends PressableProps {
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
   icon?: ReactNode;
+  disabled?: boolean;
 }
 
 const deviceHeight = Dimensions.get('screen').height;
 
-// Dimensions.get('screen') - 안드로이드는 상단 상태표시바까지 포함하는 스크린 크기
 const CustomButton = ({
   label,
   variant = 'filled',
@@ -35,24 +35,34 @@ const CustomButton = ({
   style = null,
   textStyle = null,
   icon = null,
+  disabled = false,
   ...props
 }: CustomButtonProps) => {
   const { theme } = useThemeStore();
   const styles = styling(theme);
   return (
     <Pressable
-      disabled={isValid}
+      disabled={disabled || isValid}
       style={({ pressed }) => [
         styles.container,
         pressed ? styles[`${variant}Pressed`] : styles[variant],
         styles[size],
         isValid && styles.isValid,
+        disabled && styles.disabled,
         style,
       ]}
       {...props}>
       <View style={styles[size]}>
         {icon}
-        <Text style={[styles.text, styles[`${variant}Text`], textStyle]}>{label}</Text>
+        <Text
+          style={[
+            styles.text,
+            styles[`${variant}Text`],
+            disabled && styles.disabledText,
+            textStyle,
+          ]}>
+          {label}
+        </Text>
       </View>
     </Pressable>
   );
@@ -68,6 +78,10 @@ const styling = (theme: ThemeMode) =>
     },
     isValid: {
       opacity: 0.5,
+    },
+    disabled: {
+      backgroundColor: colors[theme].GRAY_300,
+      borderColor: colors[theme].GRAY_300,
     },
     filled: {
       backgroundColor: colors[theme].DARK_MAIN,
@@ -112,6 +126,9 @@ const styling = (theme: ThemeMode) =>
     },
     outlinedText: {
       color: colors[theme].DARK_MAIN,
+    },
+    disabledText: {
+      color: colors[theme].GRAY_500,
     },
   });
 

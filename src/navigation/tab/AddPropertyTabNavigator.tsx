@@ -15,6 +15,7 @@ import { ThemeMode } from '@/types/common';
 import useThemeStore from '@/store/useThemeStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CustomButton from '@/components/common/CustomButton';
+import useAddPropertyStore, { AddPropertyState } from '@/store/useAddPropertyStore';
 
 const Tab = createBottomTabNavigator();
 
@@ -51,8 +52,10 @@ const CustomTabBar = ({ state, descriptors, navigation }: CustomTabBarProps) => 
   const { theme } = useThemeStore();
   const styles = styling(theme);
   const progress = ((state.index + 1) / state.routes.length) * 100;
-
-  console.log(descriptors);
+  const isStepValid = useAddPropertyStore(state => state.isStepValid);
+  const { propertyType } = useAddPropertyStore(state => state);
+  const currentRouteName = state.routes[state.index].name as keyof AddPropertyState;
+  const isNextDisabled = !isStepValid(currentRouteName);
 
   return (
     <View style={styles.bottomTabContainer}>
@@ -82,7 +85,8 @@ const CustomTabBar = ({ state, descriptors, navigation }: CustomTabBarProps) => 
             }
           }}
           label="다음"
-          style={styles.tabButton}>
+          style={styles.tabButton}
+          disabled={isNextDisabled}>
           <Text style={styles.tabButtonText}>
             {state.index === state.routes.length - 1 ? '완료' : '다음'}
           </Text>
