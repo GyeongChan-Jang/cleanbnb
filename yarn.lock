@@ -5,6 +5,13 @@ __metadata:
   version: 6
   cacheKey: 8
 
+"@actbase/react-daum-postcode@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@actbase/react-daum-postcode@npm:1.0.4"
+  checksum: dc0de6c6c517380b7994b188957a532a2296680e1955f0b768e6fb2ef991317f36727ab8de80e3f4e93c07373e6932ef7bcb3d16515f6bda2993e354e07ae1e0
+  languageName: node
+  linkType: hard
+
 "@ampproject/remapping@npm:^2.2.0":
   version: 2.3.0
   resolution: "@ampproject/remapping@npm:2.3.0"
@@ -4145,6 +4152,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "cleanbnb@workspace:."
   dependencies:
+    "@actbase/react-daum-postcode": ^1.0.4
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
@@ -4173,6 +4181,7 @@ __metadata:
     react-error-boundary: ^4.0.13
     react-native: ^0.74.4
     react-native-config: ^1.5.3
+    react-native-daum-postcode: ^1.0.11
     react-native-elements: ^3.4.3
     react-native-encrypted-storage: ^4.0.3
     react-native-gesture-handler: ^2.17.1
@@ -8814,6 +8823,16 @@ __metadata:
     react-native-windows:
       optional: true
   checksum: 0eb74e0a10ae6e96422671482da83dea16571f4f5ad848d1f18015dccbecb9cbc066788df72a88c630abf4aed0edb7616ec27704817cff18bd6ed7d61979d671
+  languageName: node
+  linkType: hard
+
+"react-native-daum-postcode@npm:^1.0.11":
+  version: 1.0.11
+  resolution: "react-native-daum-postcode@npm:1.0.11"
+  peerDependencies:
+    react-native: "*"
+    react-native-webview: "*"
+  checksum: eab9134a19fbc2d6d2e25dd62b4eed7558a2efb73ed546e04da3892e7085e5d541311bb3522f8018539dbae73d5d446fa326b8c23344ce1c83c90b7027fce832
   languageName: node
   linkType: hard
 

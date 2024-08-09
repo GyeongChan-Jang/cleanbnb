@@ -28,7 +28,10 @@ const BasicInfoScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>청소가 필요한 공간의 정보를 입력해주세요</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>청소가 필요한 공간의</Text>
+        <Text style={styles.title}>정보를 입력해주세요</Text>
+      </View>
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>청소가 필요한 크기 (m²)</Text>
@@ -111,10 +114,13 @@ const styling = (theme: ThemeMode) =>
       padding: 20,
       backgroundColor: colors[theme].WHITE,
     },
-    title: {
-      fontSize: 22,
-      fontWeight: 'bold',
+    titleContainer: {
       marginBottom: 20,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: 'bold',
+
       color: colors[theme].BLACK,
     },
     inputContainer: {

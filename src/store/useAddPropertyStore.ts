@@ -1,5 +1,6 @@
 // src/store/useAddPropertyStore.ts
 import { addPropertyNavigations } from '@/constants';
+import { AddPropertyAddress } from '@/types/property';
 import create from 'zustand';
 
 const mapRouteToStepKey = (routeName: string): keyof AddPropertyState => {
@@ -34,7 +35,7 @@ export interface AddPropertyState {
     cleaningTime: [number, number];
     cleaningDuration: number;
   };
-  location: string;
+  location: AddPropertyAddress;
   cleaningTools: string[];
   cleaningAreas: string[];
   guidelinePhotos: string[];
@@ -42,7 +43,7 @@ export interface AddPropertyState {
   pricing: number;
   setPropertyType: (type: string) => void;
   setBasicInfo: (info: Partial<AddPropertyState['basicInfo']>) => void;
-  setLocation: (location: string) => void;
+  setLocation: (location: AddPropertyAddress) => void;
   setCleaningTools: (tools: string[]) => void;
   setCleaningAreas: (areas: string[]) => void;
   setGuidelinePhotos: (photos: string[]) => void;
@@ -60,7 +61,17 @@ const useAddPropertyStore = create<AddPropertyState>((set, get) => ({
     cleaningTime: [0, 0],
     cleaningDuration: 0,
   },
-  location: '',
+  location: {
+    address: '',
+    address_detail: '',
+    apartment: '',
+    bcode: '',
+    road_address: '',
+    sido: '',
+    sigungu: '',
+    sigungu_code: '',
+    zonecode: '',
+  },
   cleaningTools: [],
   cleaningAreas: [],
   guidelinePhotos: [],
@@ -70,7 +81,9 @@ const useAddPropertyStore = create<AddPropertyState>((set, get) => ({
   setBasicInfo: (info) => set((state) => ({ 
     basicInfo: { ...state.basicInfo, ...info } 
   })),
-  setLocation: (location) => set({ location }),
+  setLocation: (location) => set({
+    location
+  }),
   setCleaningTools: (tools) => set({ cleaningTools: tools }),
   setCleaningAreas: (areas) => set({ cleaningAreas: areas }),
   setGuidelinePhotos: (photos) => set({ guidelinePhotos: photos }),
@@ -92,7 +105,7 @@ const useAddPropertyStore = create<AddPropertyState>((set, get) => ({
           state.basicInfo.cleaningDuration > 0
         );
       case 'location':
-        return state.location !== '';
+        return state.location.address !== '';
       case 'cleaningTools':
         return state.cleaningTools.length > 0;
       case 'cleaningAreas':
