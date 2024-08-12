@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Button } from 'react-native';
 import { colors } from '@/constants';
 import useThemeStore from '@/store/useThemeStore';
@@ -10,40 +10,37 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
 import { TextInput } from 'react-native-gesture-handler';
 import Config from 'react-native-config';
+import { AddPropertyAddress } from '@/types/property';
 
 const LocationScreen = () => {
   const { theme } = useThemeStore();
   const styles = styling(theme);
-  // const { location, setLocation } = useAddPropertyStore();
-  const [searchAddress, setSearchAddress] = useState('');
-  const [addressDetail, setAddressDetail] = useState('');
-  const [coordinates, setCoordinates] = useState({ latitude: 0, longitude: 0 });
+  const { location, setLocation } = useAddPropertyStore();
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleComplete = (data: any) => {
-    let fullAddress = data.address;
-    let extraAddress = '';
+  const handleComplete = async (data: any) => {
+    const fullAddress = data.address + (data.buildingName ? ` (${data.buildingName})` : '');
 
-    if (data.addressType === 'R') {
-      if (data.bname !== '') {
-        extraAddress += data.bname;
-      }
-      if (data.buildingName !== '') {
-        extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
-      }
-      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
-    }
+    const newLocation = {
+      ...location,
+      address: fullAddress,
+      roadAddress: data.roadAddress,
+      zoneCode: data.zonecode,
+      sido: data.sido,
+      sigungu: data.sigungu,
+      sigunguCode: data.sigunguCode,
+      bcode: data.bcode,
+    };
 
-    setSearchAddress(fullAddress);
+    setLocation(newLocation);
     setModalVisible(false);
+    await getCoordinates(fullAddress, newLocation);
   };
 
-  const onPressSearchAddress = () => {
-    setModalVisible(true);
-  };
+  const onPressSearchAddress = () => setModalVisible(true);
 
-  const getCoordinates = async (address: string) => {
+  const getCoordinates = async (address: string, newLocation: AddPropertyAddress) => {
     try {
       const response = await axios.get(
         `https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(address)}`,
@@ -56,11 +53,14 @@ const LocationScreen = () => {
 
       if (response.data.documents.length > 0) {
         const { x, y } = response.data.documents[0].address;
-        setCoordinates({
-          latitude: parseFloat(y),
-          longitude: parseFloat(x),
-        });
-        console.log('Coordinates:', { latitude: parseFloat(y), longitude: parseFloat(x) });
+        const updatedLocation = {
+          ...newLocation,
+          coordinates: {
+            latitude: parseFloat(y),
+            longitude: parseFloat(x),
+          },
+        };
+        setLocation(updatedLocation);
       } else {
         console.log('No results found for the given address');
       }
@@ -69,29 +69,21 @@ const LocationScreen = () => {
     }
   };
 
-  useEffect(() => {
-    if (searchAddress) {
-      getCoordinates(searchAddress);
-    }
-  }, [searchAddress]);
-
-  console.log(searchAddress);
-
   return (
     <>
       <View style={styles.container}>
         <Text style={styles.title}>숙소 주소를 등록해주세요</Text>
         <View style={styles.inner}>
           <View style={styles.formContainer}>
-            {searchAddress && (
+            {location.address && (
               <>
                 <View style={styles.addressContainer}>
-                  <Text style={styles.addressText}>{searchAddress}</Text>
+                  <Text style={styles.addressText}>{location.address}</Text>
                 </View>
                 <TextInput
                   style={styles.addressDetailInput}
-                  value={addressDetail}
-                  onChangeText={text => setAddressDetail(text)}
+                  value={location.addressDetail}
+                  onChangeText={text => setLocation({ ...location, addressDetail: text })}
                   placeholder="상세 주소를 입력해주세요."
                 />
               </>

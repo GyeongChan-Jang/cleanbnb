@@ -1,7 +1,6 @@
-// src/store/useAddPropertyStore.ts
 import { addPropertyNavigations } from '@/constants';
 import { AddPropertyAddress } from '@/types/property';
-import create from 'zustand';
+import {create} from 'zustand';
 
 const mapRouteToStepKey = (routeName: string): keyof AddPropertyState => {
   switch (routeName) {
@@ -63,14 +62,18 @@ const useAddPropertyStore = create<AddPropertyState>((set, get) => ({
   },
   location: {
     address: '',
-    address_detail: '',
+    addressDetail: '',
     apartment: '',
     bcode: '',
-    road_address: '',
+    roadAddress: '',
     sido: '',
     sigungu: '',
-    sigungu_code: '',
-    zonecode: '',
+    sigunguCode: '',
+    zoneCode: '',
+    coordinates: {
+      latitude: 0,
+      longitude: 0,
+    }
   },
   cleaningTools: [],
   cleaningAreas: [],
@@ -81,9 +84,9 @@ const useAddPropertyStore = create<AddPropertyState>((set, get) => ({
   setBasicInfo: (info) => set((state) => ({ 
     basicInfo: { ...state.basicInfo, ...info } 
   })),
-  setLocation: (location) => set({
-    location
-  }),
+  setLocation: (newLocation) => set((state) => ({
+  location: { ...state.location, ...newLocation }
+})),
   setCleaningTools: (tools) => set({ cleaningTools: tools }),
   setCleaningAreas: (areas) => set({ cleaningAreas: areas }),
   setGuidelinePhotos: (photos) => set({ guidelinePhotos: photos }),

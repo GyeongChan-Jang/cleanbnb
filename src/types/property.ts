@@ -6,14 +6,18 @@ interface PropertyType {
 
 interface AddPropertyAddress {
   address: string 
-  address_detail: string
+  addressDetail: string
   apartment: string
   bcode: string
-  road_address: string
+  roadAddress: string
   sido: string
   sigungu: string
-  sigungu_code: string
-  zonecode: string
+  sigunguCode: string
+  zoneCode: string
+  coordinates: {
+    latitude: number
+    longitude: number
+  }
 }
 
 export type { PropertyType, AddPropertyAddress };
