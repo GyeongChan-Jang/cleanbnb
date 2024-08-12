@@ -135,7 +135,7 @@ const styling = (theme: ThemeMode) =>
       gap: 5,
       flexDirection: 'row',
       justifyContent: 'center',
-      backgroundColor: colors[theme].BLUE_500,
+      backgroundColor: colors[theme].SKY_MAIN,
       padding: 15,
       borderRadius: 8,
       alignItems: 'center',

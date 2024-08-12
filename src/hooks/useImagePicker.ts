@@ -1,7 +1,5 @@
-// useImagePicker.ts
-
 import ImagePicker from 'react-native-image-crop-picker';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Toast from 'react-native-toast-message';
 import { ImageUri } from '@/types/domain';
 import { uploadImage } from '@/utils/uploadImage';
@@ -10,24 +8,26 @@ interface UseImagePickerProps {
   initialImages: ImageUri[];
   mode?: 'multiple' | 'single';
   onSettled?: () => void;
+  maxImages?: number;
 }
 
-const useImagePicker = ({ initialImages, mode = 'single', onSettled }: UseImagePickerProps) => {
+const useImagePicker = ({ initialImages, mode = 'single', onSettled, maxImages = 10 }: UseImagePickerProps) => {
   const [imageUris, setImageUris] = useState<ImageUri[]>(initialImages);
 
-  const deleteImageUri = (uri: string) => {
-    const newImageUris = imageUris.filter(image => image.uri !== uri);
-    setImageUris(newImageUris);
-  };
+  const deleteImageUri = useCallback((uri: string) => {
+    setImageUris(prev => prev.filter(image => image.uri !== uri));
+  }, []);
 
-  const changeImageUrisOrder = (fromIndex: number, toIndex: number) => {
-    const copyImageUris = [...imageUris];
-    const [removedImage] = copyImageUris.splice(fromIndex, 1);
-    copyImageUris.splice(toIndex, 0, removedImage);
-    setImageUris(copyImageUris);
-  };
+  const changeImageUrisOrder = useCallback((fromIndex: number, toIndex: number) => {
+    setImageUris(prev => {
+      const copyImageUris = [...prev];
+      const [removedImage] = copyImageUris.splice(fromIndex, 1);
+      copyImageUris.splice(toIndex, 0, removedImage);
+      return copyImageUris;
+    });
+  }, []);
 
-  const handleChange = async (
+  const handleChange = useCallback(async (
     bucketName: string | undefined,
     userId: string | undefined,
     folderName: string = '',
@@ -52,8 +52,12 @@ const useImagePicker = ({ initialImages, mode = 'single', onSettled }: UseImageP
         cropperCancelText: '취소',
       });
 
-      const uploadPromises = (Array.isArray(images) ? images : [images]).map(image =>
-        uploadImage(bucketName, userId, image, folderName),
+      const imagesToUpload = Array.isArray(images) ? images : [images];
+      const remainingSlots = maxImages - imageUris.length;
+      const imagesToProcess = imagesToUpload.slice(0, remainingSlots);
+
+      const uploadPromises = imagesToProcess.map(image =>
+        uploadImage(bucketName, userId, image, folderName)
       );
 
       const uploadedUrls = await Promise.all(uploadPromises);
@@ -61,11 +65,13 @@ const useImagePicker = ({ initialImages, mode = 'single', onSettled }: UseImageP
       const validUrls = uploadedUrls.filter((url): url is string => url !== null);
 
       if (validUrls.length > 0) {
-        if (mode === 'single') {
-          setImageUris([{ uri: validUrls[0] }]);
-        } else {
-          setImageUris(prev => [...prev, ...validUrls.map(uri => ({ uri }))]);
-        }
+        setImageUris(prev => {
+          const newImages = validUrls.map(uri => ({ uri }));
+          const uniqueNewImages = newImages.filter(
+            newImg => !prev.some(existingImg => existingImg.uri === newImg.uri)
+          );
+          return [...prev, ...uniqueNewImages].slice(0, maxImages);
+        });
         if (onSettled) onSettled();
       } else {
         Toast.show({
@@ -85,7 +91,7 @@ const useImagePicker = ({ initialImages, mode = 'single', onSettled }: UseImageP
         });
       }
     }
-  };
+  }, [imageUris.length, maxImages, mode, onSettled]);
 
   return {
     imageUris,

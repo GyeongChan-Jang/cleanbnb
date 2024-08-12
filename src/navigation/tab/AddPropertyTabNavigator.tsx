@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { addPropertyNavigations, colors } from '@/constants';
 import BasicInfoScreen from '@/screens/property/add/BasicInfoScreen';
@@ -13,7 +13,6 @@ import { BottomTabBarProps, createBottomTabNavigator } from '@react-navigation/b
 import { ParamListBase, TabNavigationState } from '@react-navigation/native';
 import { ThemeMode } from '@/types/common';
 import useThemeStore from '@/store/useThemeStore';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CustomButton from '@/components/common/CustomButton';
 import useAddPropertyStore, { AddPropertyState } from '@/store/useAddPropertyStore';
 
@@ -33,7 +32,9 @@ export type AddPropertyTabParamList = {
   [addPropertyNavigations.LOCATION]: undefined;
   [addPropertyNavigations.CLEANING_TOOLS]: undefined;
   [addPropertyNavigations.CLEANING_AREAS]: undefined;
-  [addPropertyNavigations.GUIDELINE_PHOTOS]: undefined;
+  [addPropertyNavigations.GUIDELINE_PHOTOS]: {
+    onNextPress?: () => Promise<void>;
+  };
   [addPropertyNavigations.SPECIAL_NOTES]: undefined;
   [addPropertyNavigations.PRICING]: undefined;
 };
@@ -53,9 +54,26 @@ const CustomTabBar = ({ state, descriptors, navigation }: CustomTabBarProps) => 
   const styles = styling(theme);
   const progress = ((state.index + 1) / state.routes.length) * 100;
   const isStepValid = useAddPropertyStore(state => state.isStepValid);
-  const { propertyType } = useAddPropertyStore(state => state);
   const currentRouteName = state.routes[state.index].name as keyof AddPropertyState;
-  const isNextDisabled = !isStepValid(currentRouteName);
+  const currentRoute = state.routes[state.index];
+  const { onNextPress } = descriptors[currentRoute.key].options as {
+    onNextPress?: () => Promise<void>;
+  };
+
+  const relevantState = useAddPropertyStore(state => ({
+    propertyType: state.propertyType,
+    basicInfo: state.basicInfo,
+    location: state.location,
+    cleaningTools: state.cleaningTools,
+    cleaningAreas: state.cleaningAreas,
+    guidelinePhotos: state.guidelinePhotos,
+    specialNotes: state.specialNotes,
+    pricing: state.pricing,
+  }));
+
+  const isNextDisabled = useMemo(() => {
+    return !isStepValid(currentRouteName);
+  }, [isStepValid, currentRouteName, relevantState]);
 
   return (
     <View style={styles.bottomTabContainer}>
@@ -75,11 +93,12 @@ const CustomTabBar = ({ state, descriptors, navigation }: CustomTabBarProps) => 
           <Text style={styles.tabButtonText}>뒤로</Text>
         </TouchableOpacity>
         <CustomButton
-          onPress={() => {
-            if (state.index < state.routes.length - 1) {
+          onPress={async () => {
+            if (onNextPress) {
+              await onNextPress();
+            } else if (state.index < state.routes.length - 1) {
               navigation.navigate(state.routes[state.index + 1].name);
             } else {
-              // 마지막 화면에서의 동작 (예: 등록 완료)
               console.log('Property registration completed');
               navigation.navigate('MainTab');
             }

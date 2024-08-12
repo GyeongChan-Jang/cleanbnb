@@ -3,4 +3,8 @@ interface ImageUri {
   uri: string;
 }
 
-export type { ImageUri };
+interface PhotoWithDescription extends ImageUri {
+  description: string;
+}
+
+export type { ImageUri, PhotoWithDescription };

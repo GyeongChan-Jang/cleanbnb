@@ -39,6 +39,8 @@ export const uploadImage = async (
     //   throw urlError;
     // }
 
+    console.log(publicUrl)
+
     return publicUrl;
   } catch (error) {
     console.error('Error uploading image:', error);

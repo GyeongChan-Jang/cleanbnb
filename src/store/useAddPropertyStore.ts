@@ -1,6 +1,8 @@
 import { addPropertyNavigations } from '@/constants';
+import { PhotoWithDescription } from '@/types/domain';
 import { AddPropertyAddress } from '@/types/property';
-import {create} from 'zustand';
+import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
 
 const mapRouteToStepKey = (routeName: string): keyof AddPropertyState => {
   switch (routeName) {
@@ -37,7 +39,7 @@ export interface AddPropertyState {
   location: AddPropertyAddress;
   cleaningTools: string[];
   cleaningAreas: string[];
-  guidelinePhotos: string[];
+  guidelinePhotos: PhotoWithDescription[];
   specialNotes: string;
   pricing: number;
   setPropertyType: (type: string) => void;
@@ -45,13 +47,14 @@ export interface AddPropertyState {
   setLocation: (location: AddPropertyAddress) => void;
   setCleaningTools: (tools: string[]) => void;
   setCleaningAreas: (areas: string[]) => void;
-  setGuidelinePhotos: (photos: string[]) => void;
+  setGuidelinePhotos: (photos: PhotoWithDescription[]) => void;
   setSpecialNotes: (notes: string) => void;
   setPricing: (price: number) => void;
   isStepValid: (routeName: string) => boolean;
 }
 
-const useAddPropertyStore = create<AddPropertyState>((set, get) => ({
+const useAddPropertyStore = create(
+  subscribeWithSelector<AddPropertyState>((set, get) => ({
   propertyType: '',
   basicInfo: { 
     size: 0, 
@@ -123,6 +126,7 @@ const useAddPropertyStore = create<AddPropertyState>((set, get) => ({
         return false;
     }
   },
-}));
+}))
+)
 
 export default useAddPropertyStore;
