@@ -1,9 +1,12 @@
+import {Image} from 'react-native-image-crop-picker';
+
 interface ImageUri {
   id?: number;
   uri: string;
 }
 
-interface PhotoWithDescription extends ImageUri {
+interface PhotoWithDescription {
+  image: Image
   description: string;
 }
 

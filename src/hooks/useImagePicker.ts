@@ -2,7 +2,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import { useState, useCallback } from 'react';
 import Toast from 'react-native-toast-message';
 import { ImageUri } from '@/types/domain';
-import { uploadImage } from '@/utils/uploadImage';
+import { uploadImages } from '@/utils/uploadImages';
 
 interface UseImagePickerProps {
   initialImages: ImageUri[];
@@ -56,17 +56,11 @@ const useImagePicker = ({ initialImages, mode = 'single', onSettled, maxImages =
       const remainingSlots = maxImages - imageUris.length;
       const imagesToProcess = imagesToUpload.slice(0, remainingSlots);
 
-      const uploadPromises = imagesToProcess.map(image =>
-        uploadImage(bucketName, userId, image, folderName)
-      );
+      const uploadedUrls = await uploadImages(bucketName, userId, imagesToProcess, folderName);
 
-      const uploadedUrls = await Promise.all(uploadPromises);
-
-      const validUrls = uploadedUrls.filter((url): url is string => url !== null);
-
-      if (validUrls.length > 0) {
+      if (uploadedUrls.length > 0) {
         setImageUris(prev => {
-          const newImages = validUrls.map(uri => ({ uri }));
+          const newImages = uploadedUrls.map(uri => ({ uri }));
           const uniqueNewImages = newImages.filter(
             newImg => !prev.some(existingImg => existingImg.uri === newImg.uri)
           );

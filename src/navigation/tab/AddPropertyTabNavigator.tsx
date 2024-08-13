@@ -9,12 +9,18 @@ import LocationScreen from '@/screens/property/add/LocationScreen';
 import NotesScreen from '@/screens/property/add/NotesScreen';
 import PricingScreen from '@/screens/property/add/PricingScreen';
 import PropertyTypeScreen from '@/screens/property/add/PropertyTypeScreen';
-import { BottomTabBarProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  BottomTabBarProps,
+  BottomTabNavigationOptions,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
 import { ParamListBase, TabNavigationState } from '@react-navigation/native';
 import { ThemeMode } from '@/types/common';
 import useThemeStore from '@/store/useThemeStore';
 import CustomButton from '@/components/common/CustomButton';
 import useAddPropertyStore, { AddPropertyState } from '@/store/useAddPropertyStore';
+import { StackNavigationOptions } from '@react-navigation/stack';
+import { BottomTabDescriptorMap } from '@react-navigation/bottom-tabs/lib/typescript/src/types';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,6 +30,15 @@ interface ProgressBarProps {
 
 interface CustomTabBarProps extends BottomTabBarProps {
   state: TabNavigationState<ParamListBase>;
+  // descriptors: BottomTabDescriptorMap & {
+  //   [key: string]: {
+  //     options: CustomStackNavigationOptions;
+  //   };
+  // };
+}
+
+export interface CustomStackNavigationOptions extends BottomTabNavigationOptions {
+  onNextPress?: () => Promise<void>;
 }
 
 export type AddPropertyTabParamList = {
@@ -56,6 +71,7 @@ const CustomTabBar = ({ state, descriptors, navigation }: CustomTabBarProps) => 
   const isStepValid = useAddPropertyStore(state => state.isStepValid);
   const currentRouteName = state.routes[state.index].name as keyof AddPropertyState;
   const currentRoute = state.routes[state.index];
+
   const { onNextPress } = descriptors[currentRoute.key].options as {
     onNextPress?: () => Promise<void>;
   };
@@ -95,6 +111,7 @@ const CustomTabBar = ({ state, descriptors, navigation }: CustomTabBarProps) => 
         <CustomButton
           onPress={async () => {
             if (onNextPress) {
+              console.log('onNextPress');
               await onNextPress();
             } else if (state.index < state.routes.length - 1) {
               navigation.navigate(state.routes[state.index + 1].name);
@@ -114,16 +131,17 @@ const CustomTabBar = ({ state, descriptors, navigation }: CustomTabBarProps) => 
     </View>
   );
 };
-
+// CustomStackNavigationOptions;
 const AddPropertyTabNavigator = () => {
   return (
     <Tab.Navigator
       tabBar={props => <CustomTabBar {...props} />}
-      screenOptions={{
+      screenOptions={({ route }): CustomStackNavigationOptions => ({
         headerShown: true,
         headerLeft: () => null, // 뒤로 가기 버튼 제거
         headerTitle: '', // 타이틀 제거
-      }}>
+        onNextPress: undefined,
+      })}>
       <Tab.Screen
         name={addPropertyNavigations.PROPERTY_TYPE}
         component={PropertyTypeScreen}

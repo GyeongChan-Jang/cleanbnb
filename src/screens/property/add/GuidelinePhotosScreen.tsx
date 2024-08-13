@@ -1,4 +1,12 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  TextInput,
+  ActivityIndicator,
+} from 'react-native';
 import { addPropertyNavigations, colors } from '@/constants';
 import useThemeStore from '@/store/useThemeStore';
 import useAddPropertyStore from '@/store/useAddPropertyStore';
@@ -9,10 +17,16 @@ import { PhotoWithDescription } from '@/types/domain';
 import useUser from '@/hooks/useUser';
 import ImagePicker from 'react-native-image-crop-picker';
 import Toast from 'react-native-toast-message';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { AddPropertyTabParamList } from '@/navigation/tab/AddPropertyTabNavigator';
-import { useEffect } from 'react';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
+import { StackNavigationOptions, StackNavigationProp } from '@react-navigation/stack';
+import {
+  AddPropertyTabParamList,
+  CustomStackNavigationOptions,
+} from '@/navigation/tab/AddPropertyTabNavigator';
+import { useCallback, useEffect, useState } from 'react';
+import { uploadImages } from '@/utils/uploadImages';
+import Config from 'react-native-config';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 const GuidelinePhotosScreen = () => {
   const { theme } = useThemeStore();
@@ -20,6 +34,7 @@ const GuidelinePhotosScreen = () => {
   const { guidelinePhotos, setGuidelinePhotos } = useAddPropertyStore();
   const navigation = useNavigation<StackNavigationProp<AddPropertyTabParamList>>();
   const { user } = useUser();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleAddPhoto = async () => {
     try {
@@ -28,8 +43,10 @@ const GuidelinePhotosScreen = () => {
         multiple: true,
         cropperChooseText: '완료',
         cropperCancelText: '취소',
+        maxFiles: 10,
       });
-      setGuidelinePhotos(images.map(image => ({ uri: image.path, description: '' })));
+
+      setGuidelinePhotos(images.map(image => ({ image, description: '' })));
     } catch (error) {
       Toast.show({
         type: 'error',
@@ -41,7 +58,7 @@ const GuidelinePhotosScreen = () => {
   };
 
   const handleRemovePhoto = (uri: string) => {
-    const newPhotos = guidelinePhotos.filter(photo => photo.uri !== uri);
+    const newPhotos = guidelinePhotos.filter(photo => photo.image.path !== uri);
     setGuidelinePhotos(newPhotos);
   };
 
@@ -51,16 +68,57 @@ const GuidelinePhotosScreen = () => {
     setGuidelinePhotos(newPhotos);
   };
 
-  const handleUploadImages = async () => {
-    // Implement your image upload logic here
-    console.log('Uploading images...');
-    // After successful upload, you can navigate to the next screen
-    // navigation.navigate(addPropertyNavigations.SPECIAL_NOTES);
-  };
+  const handleUploadImages = useCallback(async () => {
+    if (!user?.id) {
+      Toast.show({
+        type: 'error',
+        text1: '로그인이 필요해요.',
+        text2: '로그인 후 이용해주세요.',
+        position: 'bottom',
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    Toast.show({
+      type: 'info',
+      text1: '이미지 업로드 중...',
+      position: 'bottom',
+    });
+
+    try {
+      const uploadedUrls = await uploadImages(
+        Config.GUIDELINE_IMAGES_BUCKET,
+        user.id,
+        guidelinePhotos.map(({ image }) => image),
+      );
+      console.log(uploadedUrls);
+
+      Toast.show({
+        type: 'success',
+        text1: '이미지 업로드 완료',
+        position: 'bottom',
+      });
+
+      navigation.navigate(addPropertyNavigations.SPECIAL_NOTES);
+    } catch (error) {
+      console.error('Image upload error:', error);
+      Toast.show({
+        type: 'error',
+        text1: '이미지 업로드 실패',
+        text2: '다시 시도해 주세요.',
+        position: 'bottom',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user?.id, guidelinePhotos, navigation]);
 
   useEffect(() => {
-    navigation.setParams({ onNextPress: handleUploadImages });
-  }, [navigation]);
+    navigation.setOptions({
+      onNextPress: handleUploadImages,
+    } as Partial<StackNavigationOptions>);
+  }, [navigation, handleUploadImages]);
 
   const renderItem = ({
     item,
@@ -72,9 +130,11 @@ const GuidelinePhotosScreen = () => {
     return (
       <View style={styles.photoWrapper}>
         <TouchableOpacity onLongPress={drag}>
-          <Image source={{ uri: item.uri }} style={styles.photo} />
+          <Image source={{ uri: item.image.path }} style={styles.photo} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.removeButton} onPress={() => handleRemovePhoto(item.uri)}>
+        <TouchableOpacity
+          style={styles.removeButton}
+          onPress={() => handleRemovePhoto(item.image.path)}>
           <Icon name="close-circle" size={24} color={colors[theme].RED_500} />
         </TouchableOpacity>
         <TextInput
@@ -83,6 +143,7 @@ const GuidelinePhotosScreen = () => {
           onChangeText={text => handleChangeDescription(index as number, text)}
           placeholder="사진 설명 입력"
           multiline
+          numberOfLines={4}
         />
       </View>
     );
@@ -90,28 +151,42 @@ const GuidelinePhotosScreen = () => {
 
   const ListHeader = () => (
     <View>
-      <Text style={styles.title}>청소가 완료된 상태의 사진을 첨부해주세요</Text>
-      <Text style={styles.subtitle}>클리너들에게 제공되는 가이드라인이 될 수 있습니다</Text>
+      <Text style={styles.title}>청소가 완료된 상태의 사진을 첨부해주세요.</Text>
+      <Text style={styles.subtitle}>* 클리너들에게 제공되는 가이드라인이 될 수 있습니다</Text>
+      <Text style={styles.subtitle}>* 최대 10장까지 등록 가능합니다.</Text>
     </View>
   );
 
   const ListFooter = () => (
     <TouchableOpacity style={styles.addPhotoButton} onPress={handleAddPhoto}>
-      <Icon name="plus" size={24} color={colors[theme].GRAY_500} />
-      <Text style={styles.addPhotoText}>사진 추가</Text>
+      {isLoading ? (
+        <ActivityIndicator size="small" color={colors[theme].GRAY_500} />
+      ) : (
+        <>
+          <Icon name="plus" size={24} color={colors[theme].GRAY_500} />
+          <Text style={styles.addPhotoText}>사진 추가</Text>
+        </>
+      )}
     </TouchableOpacity>
   );
 
   return (
-    <DraggableFlatList
-      data={guidelinePhotos}
-      renderItem={renderItem}
-      keyExtractor={(item, index) => `draggable-item-${item.uri}-${index}`}
-      onDragEnd={({ data }) => setGuidelinePhotos(data)}
-      ListHeaderComponent={ListHeader}
-      ListFooterComponent={ListFooter}
-      contentContainerStyle={styles.contentContainer}
-    />
+    <View>
+      <DraggableFlatList
+        data={guidelinePhotos}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => `draggable-item-${item.image.path}-${index}`}
+        onDragEnd={({ data }) => setGuidelinePhotos(data)}
+        ListHeaderComponent={ListHeader}
+        ListFooterComponent={ListFooter}
+        contentContainerStyle={styles.contentContainer}
+      />
+      {isLoading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color={colors[theme].SKY_MAIN} />
+        </View>
+      )}
+    </View>
   );
 };
 
@@ -119,10 +194,17 @@ const styling = (theme: ThemeMode) =>
   StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: colors[theme].WHITE,
     },
     contentContainer: {
       padding: 20,
       backgroundColor: colors[theme].WHITE,
+    },
+    loadingOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     title: {
       fontSize: 22,
@@ -132,7 +214,7 @@ const styling = (theme: ThemeMode) =>
     },
     subtitle: {
       fontSize: 16,
-      marginBottom: 20,
+      marginBottom: 10,
       color: colors[theme].GRAY_500,
     },
     photoWrapper: {
@@ -157,6 +239,8 @@ const styling = (theme: ThemeMode) =>
       borderWidth: 1,
       borderColor: colors[theme].GRAY_300,
       borderRadius: 8,
+      // height: 200,
+      // textAlignVertical: 'top',
     },
     addPhotoButton: {
       width: '100%',
