@@ -87,12 +87,12 @@ const GuidelinePhotosScreen = () => {
     });
 
     try {
-      const uploadedUrls = await uploadImages(
-        Config.GUIDELINE_IMAGES_BUCKET,
-        user.id,
-        guidelinePhotos.map(({ image }) => image),
-      );
-      console.log(uploadedUrls);
+      // INFO: 개발중이라 이미지 업로드는 주석 처리
+      // const uploadedUrls = await uploadImages(
+      //   Config.GUIDELINE_IMAGES_BUCKET,
+      //   user.id,
+      //   guidelinePhotos.map(({ image }) => image),
+      // );
 
       Toast.show({
         type: 'success',
@@ -100,7 +100,7 @@ const GuidelinePhotosScreen = () => {
         position: 'bottom',
       });
 
-      navigation.navigate(addPropertyNavigations.SPECIAL_NOTES);
+      navigation.navigate(addPropertyNavigations.NOTES);
     } catch (error) {
       console.error('Image upload error:', error);
       Toast.show({

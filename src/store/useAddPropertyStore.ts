@@ -1,6 +1,6 @@
 import { addPropertyNavigations } from '@/constants';
 import { PhotoWithDescription } from '@/types/domain';
-import { AddPropertyAddress } from '@/types/property';
+import { AddPropertyAddress, PropertyNote } from '@/types/property';
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
@@ -18,8 +18,8 @@ const mapRouteToStepKey = (routeName: string): keyof AddPropertyState => {
       return 'cleaningAreas';
     case addPropertyNavigations.GUIDELINE_PHOTOS:
       return 'guidelinePhotos';
-    case addPropertyNavigations.SPECIAL_NOTES:
-      return 'specialNotes';
+    case addPropertyNavigations.NOTES:
+      return 'notes';
     case addPropertyNavigations.PRICING:
       return 'pricing';
     default:
@@ -40,7 +40,7 @@ export interface AddPropertyState {
   cleaningTools: string[];
   cleaningAreas: string[];
   guidelinePhotos: PhotoWithDescription[];
-  specialNotes: string;
+  notes: PropertyNote;
   pricing: number;
   setPropertyType: (type: string) => void;
   setBasicInfo: (info: Partial<AddPropertyState['basicInfo']>) => void;
@@ -48,7 +48,7 @@ export interface AddPropertyState {
   setCleaningTools: (tools: string[]) => void;
   setCleaningAreas: (areas: string[]) => void;
   setGuidelinePhotos: (photos: PhotoWithDescription[]) => void;
-  setSpecialNotes: (notes: string) => void;
+  setNotes: (notes: PropertyNote) => void;
   setPricing: (price: number) => void;
   isStepValid: (routeName: string) => boolean;
 }
@@ -81,7 +81,11 @@ const useAddPropertyStore = create(
   cleaningTools: [],
   cleaningAreas: [],
   guidelinePhotos: [],
-  specialNotes: '',
+  notes: {
+    images: [],
+    description: '',
+    cleaningNotes: '',
+  },
   pricing: 0,
   setPropertyType: (type) => set({ propertyType: type }),
   setBasicInfo: (info) => set((state) => ({ 
@@ -93,7 +97,7 @@ const useAddPropertyStore = create(
   setCleaningTools: (tools) => set({ cleaningTools: tools }),
   setCleaningAreas: (areas) => set({ cleaningAreas: areas }),
   setGuidelinePhotos: (photos) => set({ guidelinePhotos: photos }),
-  setSpecialNotes: (notes) => set({ specialNotes: notes }),
+  setNotes: (notes) => set({ notes }),
   setPricing: (price) => set({ pricing: price }),
   isStepValid: (routeName: string) => {
     const state = get();
@@ -118,8 +122,8 @@ const useAddPropertyStore = create(
         return state.cleaningAreas.length > 0;
       case 'guidelinePhotos':
         return state.guidelinePhotos.length > 0;
-      case 'specialNotes':
-        return state.specialNotes !== '';
+      case 'notes':
+        return state.notes.cleaningNotes !== '';
       case 'pricing':
         return state.pricing > 0;
       default:

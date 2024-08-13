@@ -26,7 +26,7 @@ const addPropertyNavigations = {
   CLEANING_TOOLS: 'CleaningTools',
   CLEANING_AREAS: 'CleaningAreas',
   GUIDELINE_PHOTOS: 'GuidelinePhotos',
-  SPECIAL_NOTES: 'SpecialNotes',
+  NOTES: 'notes',
   PRICING: 'Pricing',
 } as const
 

@@ -3,6 +3,7 @@ import React from 'react';
 import { svg } from '../../assets/svg';
 
 import { SvgXml } from 'react-native-svg';
+import Config from 'react-native-config';
 
 const HomeScreen = () => {
   return (

@@ -50,7 +50,7 @@ export type AddPropertyTabParamList = {
   [addPropertyNavigations.GUIDELINE_PHOTOS]: {
     onNextPress?: () => Promise<void>;
   };
-  [addPropertyNavigations.SPECIAL_NOTES]: undefined;
+  [addPropertyNavigations.NOTES]: undefined;
   [addPropertyNavigations.PRICING]: undefined;
 };
 
@@ -83,7 +83,7 @@ const CustomTabBar = ({ state, descriptors, navigation }: CustomTabBarProps) => 
     cleaningTools: state.cleaningTools,
     cleaningAreas: state.cleaningAreas,
     guidelinePhotos: state.guidelinePhotos,
-    specialNotes: state.specialNotes,
+    specialNotes: state.notes,
     pricing: state.pricing,
   }));
 
@@ -173,7 +173,7 @@ const AddPropertyTabNavigator = () => {
         options={{ title: '가이드라인 사진' }}
       />
       <Tab.Screen
-        name={addPropertyNavigations.SPECIAL_NOTES}
+        name={addPropertyNavigations.NOTES}
         component={NotesScreen}
         options={{ title: '특이사항' }}
       />

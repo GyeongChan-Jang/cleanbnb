@@ -1,3 +1,5 @@
+import {Image} from 'react-native-image-crop-picker';
+
 interface PropertyType { 
   id: string;
   type: string;
@@ -20,4 +22,10 @@ interface AddPropertyAddress {
   }
 }
 
-export type { PropertyType, AddPropertyAddress };
+interface PropertyNote {
+  images: Image[]
+  description: string;
+  cleaningNotes: string;
+}
+
+export type { PropertyType, AddPropertyAddress, PropertyNote };
