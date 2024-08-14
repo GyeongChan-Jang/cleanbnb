@@ -117,10 +117,8 @@ const CustomTabBar = ({ state, descriptors, navigation }: CustomTabBarProps) => 
         </TouchableOpacity>
         <CustomButton
           onPress={async () => {
-            if (onNextPress) {
-              console.log('onNextPress');
-              await onNextPress();
-            } else if (state.index < state.routes.length - 1) {
+            if (onNextPress) await onNextPress();
+            else if (state.index < state.routes.length - 1) {
               navigation.navigate(state.routes[state.index + 1].name);
             } else {
               console.log('Property registration completed');
