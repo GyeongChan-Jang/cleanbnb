@@ -90,7 +90,7 @@ const NotesScreen = () => {
       Toast.show({
         type: 'success',
         text1: '이미지 업로드 완료',
-        position: 'bottom',
+        position: 'top',
       });
 
       navigation.navigate(addPropertyNavigations.PRICING);
@@ -100,7 +100,7 @@ const NotesScreen = () => {
         type: 'error',
         text1: '이미지 업로드 실패',
         text2: '다시 시도해 주세요.',
-        position: 'bottom',
+        position: 'top',
       });
     } finally {
       setIsLoading(false);
@@ -112,8 +112,6 @@ const NotesScreen = () => {
       onNextPress: handleSaveNotes,
     } as Partial<StackNavigationOptions>);
   }, [navigation, handleSaveNotes]);
-
-  console.log(Config.PROPERTY_IMAGES_BUCKET);
 
   const renderPhotos = () => {
     if (notes.images.length === 0) {

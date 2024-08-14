@@ -28,6 +28,7 @@ const addPropertyNavigations = {
   GUIDELINE_PHOTOS: 'GuidelinePhotos',
   NOTES: 'notes',
   PRICING: 'Pricing',
+  COMPLETE: 'Complete',
 } as const
 
 const propertyNavigations = {

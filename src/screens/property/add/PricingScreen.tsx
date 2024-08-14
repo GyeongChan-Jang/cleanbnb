@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
-import { colors } from '@/constants';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
+import { addPropertyNavigations, colors } from '@/constants';
 import useThemeStore from '@/store/useThemeStore';
 import useAddPropertyStore from '@/store/useAddPropertyStore';
 import { ThemeMode } from '@/types/common';
@@ -16,6 +24,7 @@ const PricingScreen = () => {
   const { pricing, setPricing } = useAddPropertyStore();
   const [price, setPrice] = useState(pricing.toString());
   const inputRef = useRef<TextInput>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handlePriceChange = (text: string) => {
     const numericPrice = text.replace(/[^0-9]/g, '');
@@ -25,7 +34,12 @@ const PricingScreen = () => {
 
   const handleSavePricing = () => {
     // 여기에 저장 로직 추가
+    setIsLoading(true);
     console.log('Pricing saved:', pricing);
+    setTimeout(() => {
+      setIsLoading(false);
+      navigation.navigate(addPropertyNavigations.COMPLETE);
+    }, 3000);
   };
 
   useEffect(() => {
@@ -46,35 +60,42 @@ const PricingScreen = () => {
   const cleanerPrice = parseInt(price, 10) ? Math.floor(parseInt(price, 10) * 0.9) : 0;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.title}>청소로 지불할 요금을 설정해주세요</Text>
-      <Text style={styles.subtitle}>언제든지 변경하실 수 있습니다</Text>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.contentContainer}>
+        <Text style={styles.title}>청소로 지불할 요금을 설정해주세요</Text>
+        <Text style={styles.subtitle}>언제든지 변경하실 수 있습니다</Text>
 
-      <View style={styles.priceInputContainer}>
-        <Text style={styles.currencySymbol}>￦</Text>
-        <TextInput
-          ref={inputRef}
-          style={styles.priceInput}
-          value={price}
-          onChangeText={handlePriceChange}
-          keyboardType="numeric"
-          placeholder="50,000"
-        />
-      </View>
+        <View style={styles.priceInputContainer}>
+          <Text style={styles.currencySymbol}>￦</Text>
+          <TextInput
+            ref={inputRef}
+            style={styles.priceInput}
+            value={price}
+            onChangeText={handlePriceChange}
+            keyboardType="numeric"
+            placeholder="50,000"
+          />
+        </View>
 
-      <Text style={styles.cleanerPriceText}>
-        (클리너 수령 요금: ￦{cleanerPrice.toLocaleString()})
-      </Text>
+        <Text style={styles.cleanerPriceText}>
+          (클리너 수령 요금: ￦{cleanerPrice.toLocaleString()})
+        </Text>
 
-      <Text style={styles.noteText}>
-        (*클리너와 호스트는 수수료를 지불함으로써 보장받을 수 있습니다)
-      </Text>
+        <Text style={styles.noteText}>
+          (*클리너와 호스트는 수수료를 지불함으로써 보장받을 수 있습니다)
+        </Text>
 
-      <TouchableOpacity style={styles.infoButton}>
-        <Icon name="information-outline" size={24} color={colors[theme].BLUE_500} />
-        <Text style={styles.infoButtonText}>요금 설정 도움말</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        <TouchableOpacity style={styles.infoButton}>
+          <Icon name="information-outline" size={24} color={colors[theme].BLUE_500} />
+          <Text style={styles.infoButtonText}>요금 설정 도움말</Text>
+        </TouchableOpacity>
+      </ScrollView>
+      {isLoading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color={colors[theme].SKY_MAIN} />
+        </View>
+      )}
+    </View>
   );
 };
 
@@ -137,6 +158,12 @@ const styling = (theme: ThemeMode) =>
       marginLeft: 10,
       fontSize: 16,
       color: colors[theme].BLUE_500,
+    },
+    loadingOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });
 

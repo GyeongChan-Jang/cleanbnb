@@ -21,6 +21,7 @@ import CustomButton from '@/components/common/CustomButton';
 import useAddPropertyStore, { AddPropertyState } from '@/store/useAddPropertyStore';
 import { StackNavigationOptions } from '@react-navigation/stack';
 import { BottomTabDescriptorMap } from '@react-navigation/bottom-tabs/lib/typescript/src/types';
+import CompleteScreen from '@/screens/property/add/CompleteScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -52,6 +53,7 @@ export type AddPropertyTabParamList = {
   };
   [addPropertyNavigations.NOTES]: undefined;
   [addPropertyNavigations.PRICING]: undefined;
+  [addPropertyNavigations.COMPLETE]: undefined;
 };
 
 const ProgressBar = ({ progress }: ProgressBarProps) => {
@@ -90,6 +92,11 @@ const CustomTabBar = ({ state, descriptors, navigation }: CustomTabBarProps) => 
   const isNextDisabled = useMemo(() => {
     return !isStepValid(currentRouteName);
   }, [isStepValid, currentRouteName, relevantState]);
+
+  // CompleteScreen에서는 탭바를 숨깁니다.
+  if (state.routes[state.index].name === addPropertyNavigations.COMPLETE) {
+    return null;
+  }
 
   return (
     <View style={styles.bottomTabContainer}>
@@ -137,7 +144,7 @@ const AddPropertyTabNavigator = () => {
     <Tab.Navigator
       tabBar={props => <CustomTabBar {...props} />}
       screenOptions={({ route }): CustomStackNavigationOptions => ({
-        headerShown: true,
+        headerShown: route.name !== addPropertyNavigations.COMPLETE,
         headerLeft: () => null, // 뒤로 가기 버튼 제거
         headerTitle: '', // 타이틀 제거
         onNextPress: undefined,
@@ -181,6 +188,14 @@ const AddPropertyTabNavigator = () => {
         name={addPropertyNavigations.PRICING}
         component={PricingScreen}
         options={{ title: '요금 설정' }}
+      />
+      <Tab.Screen
+        name={addPropertyNavigations.COMPLETE}
+        component={CompleteScreen}
+        options={{
+          headerShown: false,
+          tabBarStyle: { display: 'none' }, // 이 줄을 추가합니다.
+        }}
       />
     </Tab.Navigator>
   );

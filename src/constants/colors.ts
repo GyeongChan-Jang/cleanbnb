@@ -11,6 +11,7 @@ const common = {
   CORAL: '#FF9770',
   YELLOW: '#FFD670',
   PINK: '#FF70A6',
+  GREEN: '#1dd3b0',
   UNCHANGE_WHITE: '#FFF',
   UNCHANGE_BLACK: '#000',
   RED_500: '#FF5F5F',

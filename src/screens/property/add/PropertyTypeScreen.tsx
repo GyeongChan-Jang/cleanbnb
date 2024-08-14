@@ -1,11 +1,14 @@
 import { View, Text, SafeAreaView, StyleSheet, FlatList } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ThemeMode } from '@/types/common';
-import { colors } from '@/constants';
+import { addPropertyNavigations, colors } from '@/constants';
 import useThemeStore from '@/store/useThemeStore';
 import PropertyTypeCard from '@/components/property/PropertyTypeCard';
 import { PropertyType } from '@/types/property';
 import useAddPropertyStore from '@/store/useAddPropertyStore';
+import { AddPropertyTabParamList } from '@/navigation/tab/AddPropertyTabNavigator';
+import { StackNavigationOptions, StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
 const propertyTypes: PropertyType[] = [
   { id: '1', type: '아파트', icon: 'business-outline' },
@@ -26,7 +29,7 @@ const propertyTypes: PropertyType[] = [
 const PropertyTypeScreen = () => {
   const { theme } = useThemeStore();
   const styles = styling(theme);
-
+  const navigation = useNavigation<StackNavigationProp<AddPropertyTabParamList>>();
   const { propertyType, setPropertyType } = useAddPropertyStore();
 
   const renderItem = ({ item }: { item: PropertyType }) => (
@@ -37,6 +40,14 @@ const PropertyTypeScreen = () => {
       onPress={() => setPropertyType(item.id)}
     />
   );
+
+  useEffect(() => {
+    navigation.setOptions({
+      onNextPress: () => {
+        navigation.navigate(addPropertyNavigations.COMPLETE);
+      },
+    } as Partial<StackNavigationOptions>);
+  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>
